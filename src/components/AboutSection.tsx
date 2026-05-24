@@ -1,7 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Code, Lightbulb, Rocket, BookOpen } from "lucide-react";
-import aboutCasualImg from "../assets/about-casual.jpg";
 
 const stats = [
   { label: "Projects Built", value: "15+", icon: Code },
@@ -50,7 +49,7 @@ export default function AboutSection() {
               <div className="w-full h-full rounded-xl bg-deep-navy relative overflow-hidden">
                 {/* Actual casual photo */}
                 <img
-                  src={aboutCasualImg}
+                  src="/images/about-casual.jpg"
                   alt="HASWIN SK - Casual"
                   className="absolute inset-0 w-full h-full object-cover object-top"
                 />

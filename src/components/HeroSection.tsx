@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Rocket, Terminal, Mail, Download, ChevronDown } from "lucide-react";
 import GlitchText from "./GlitchText";
-import heroProfileImg from "../assets/hero-profile.jpg";
 
 const subtitles = [
   "Building immersive AI experiences",
@@ -242,7 +241,7 @@ export default function HeroSection() {
               <div className="absolute inset-12 rounded-full overflow-hidden border-2 border-neon-blue/30 animate-hologram shadow-[0_0_40px_rgba(0,212,255,0.15)]">
                 {/* Actual profile photo */}
                 <img
-                  src={heroProfileImg}
+                  src="/images/hero-profile.jpg"
                   alt="HASWIN SK"
                   className="absolute inset-0 w-full h-full object-cover object-top scale-110"
                 />
