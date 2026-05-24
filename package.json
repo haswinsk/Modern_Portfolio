@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "npx vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "chmod +x node_modules/.bin/*"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
