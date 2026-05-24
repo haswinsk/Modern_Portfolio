@@ -137,7 +137,7 @@ export default function AIChatbot() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed z-50 left-4 right-4 bottom-20 md:bottom-20 md:right-6 md:left-auto mx-auto w-[calc(100%-3rem)] max-w-[300px] glass-panel-strong rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_48px_rgba(0,212,255,0.08)] -translate-y-[1px]"
+            className="fixed z-50 left-4 right-4 bottom-32 md:bottom-20 md:right-6 md:left-auto mx-auto w-[calc(100%-3rem)] max-w-[300px] glass-panel-strong rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 shadow-[0_0_48px_rgba(0,212,255,0.08)] -translate-y-[1px]"
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
