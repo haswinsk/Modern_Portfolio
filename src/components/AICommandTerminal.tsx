@@ -28,7 +28,7 @@ export default function AICommandTerminal() {
   const timersRef = useRef<number[]>([]);
 
   const commandIndex = useMemo(() => {
-    return terminalCommands.map((command) => command.toUpperCase());
+    return terminalCommands.map((command) => command.toLowerCase());
   }, []);
 
   useEffect(() => {
