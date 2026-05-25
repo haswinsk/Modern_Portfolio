@@ -112,32 +112,28 @@ function ProjectCard({
         {/* Actions */}
         <div className="flex items-center gap-3 pt-3 border-t border-white/5">
           {project.demoUrl && (
-            <a
-              href={project.demoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
               onClick={(e) => {
                 e.stopPropagation();
+                window.open(project.demoUrl, '_blank', 'noopener,noreferrer');
               }}
-              className="flex items-center gap-1.5 text-[11px] font-mono text-white/40 hover:text-neon-blue transition-colors cursor-pointer pointer-events-auto"
+              className="flex items-center gap-1.5 text-[11px] font-mono text-white/40 hover:text-neon-blue transition-colors cursor-pointer pointer-events-auto bg-transparent border-none"
             >
               <ExternalLink size={12} />
               DEMO
-            </a>
+            </button>
           )}
           {project.githubUrl && (
-            <a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
               onClick={(e) => {
                 e.stopPropagation();
+                window.open(project.githubUrl, '_blank', 'noopener,noreferrer');
               }}
-              className="flex items-center gap-1.5 text-[11px] font-mono text-white/40 hover:text-purple-accent transition-colors cursor-pointer pointer-events-auto"
+              className="flex items-center gap-1.5 text-[11px] font-mono text-white/40 hover:text-purple-accent transition-colors cursor-pointer pointer-events-auto bg-transparent border-none"
             >
               <Code size={12} />
               SOURCE
-            </a>
+            </button>
           )}
           <div className="ml-auto">
             <Layers size={14} className="text-white/20 group-hover:text-neon-blue/40 transition-colors" />
