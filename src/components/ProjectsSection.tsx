@@ -119,7 +119,7 @@ function ProjectCard({
               onClick={(e) => {
                 e.stopPropagation();
               }}
-              className="flex items-center gap-1.5 text-[11px] font-mono text-white/40 hover:text-neon-blue transition-colors"
+              className="flex items-center gap-1.5 text-[11px] font-mono text-white/40 hover:text-neon-blue transition-colors cursor-pointer pointer-events-auto"
             >
               <ExternalLink size={12} />
               DEMO
@@ -133,7 +133,7 @@ function ProjectCard({
               onClick={(e) => {
                 e.stopPropagation();
               }}
-              className="flex items-center gap-1.5 text-[11px] font-mono text-white/40 hover:text-purple-accent transition-colors"
+              className="flex items-center gap-1.5 text-[11px] font-mono text-white/40 hover:text-purple-accent transition-colors cursor-pointer pointer-events-auto"
             >
               <Code size={12} />
               SOURCE
