@@ -227,27 +227,33 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
               {/* Actions */}
               {!isResearchProject && (
                 <motion.div className="flex flex-wrap gap-3 pt-4 border-t border-white/5" initial={{ opacity: 0, y: 12 }} animate={{ opacity: booting ? 0 : 1, y: booting ? 12 : 0 }} transition={{ duration: 0.45, delay: 0.42 }}>
-                  <motion.button
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium"
-                    style={{
-                      backgroundColor: `${project.color}15`,
-                      color: project.color,
-                      border: `1px solid ${project.color}40`,
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <ExternalLink size={14} />
-                    Live Demo
-                  </motion.button>
-                  <motion.button
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium glass-panel text-white/70 hover:text-white"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Code size={14} />
-                    View Source
-                  </motion.button>
+                  {project.demoUrl && (
+                    <motion.button
+                      onClick={() => window.open(project.demoUrl, '_blank', 'noopener,noreferrer')}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium"
+                      style={{
+                        backgroundColor: `${project.color}15`,
+                        color: project.color,
+                        border: `1px solid ${project.color}40`,
+                      }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <ExternalLink size={14} />
+                      Live Demo
+                    </motion.button>
+                  )}
+                  {project.githubUrl && (
+                    <motion.button
+                      onClick={() => window.open(project.githubUrl, '_blank', 'noopener,noreferrer')}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium glass-panel text-white/70 hover:text-white"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Code size={14} />
+                      View Source
+                    </motion.button>
+                  )}
                 </motion.div>
               )}
             </div>
