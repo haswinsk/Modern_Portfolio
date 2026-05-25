@@ -98,6 +98,8 @@ export const projects: Project[] = [
     ],
     category: "Security Tool",
     status: "Prototype",
+    demoUrl: "https://quick-pass-nu.vercel.app/",
+    githubUrl: "https://github.com/haswinsk/QuickPass.git",
     color: "#a855f7",
   },
   {
