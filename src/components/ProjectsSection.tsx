@@ -111,24 +111,34 @@ function ProjectCard({
 
         {/* Actions */}
         <div className="flex items-center gap-3 pt-3 border-t border-white/5">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-            className="flex items-center gap-1.5 text-[11px] font-mono text-white/40 hover:text-neon-blue transition-colors"
-          >
-            <ExternalLink size={12} />
-            DEMO
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-            className="flex items-center gap-1.5 text-[11px] font-mono text-white/40 hover:text-purple-accent transition-colors"
-          >
-            <Code size={12} />
-            SOURCE
-          </button>
+          {project.demoUrl && (
+            <a
+              href={project.demoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              className="flex items-center gap-1.5 text-[11px] font-mono text-white/40 hover:text-neon-blue transition-colors"
+            >
+              <ExternalLink size={12} />
+              DEMO
+            </a>
+          )}
+          {project.githubUrl && (
+            <a
+              href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              className="flex items-center gap-1.5 text-[11px] font-mono text-white/40 hover:text-purple-accent transition-colors"
+            >
+              <Code size={12} />
+              SOURCE
+            </a>
+          )}
           <div className="ml-auto">
             <Layers size={14} className="text-white/20 group-hover:text-neon-blue/40 transition-colors" />
           </div>
