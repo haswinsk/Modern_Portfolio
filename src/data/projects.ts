@@ -135,6 +135,8 @@ export const projects: Project[] = [
     ],
     category: "Marketplace Platform",
     status: "Concept Prototype",
+    demoUrl: "https://neighborly-services.vercel.app/",
+    githubUrl: "https://github.com/haswinsk/neighborly-services.git",
     color: "#06b6d4",
   },
 ];
