@@ -263,8 +263,7 @@ export default function AIChatbot() {
 
             {/* Input */}
             <div
-              className="flex items-end gap-2 border-t border-[#D6B477]/15 bg-[#1B1A18] p-3"
-              style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+              className="flex items-end gap-2 border-t border-[#D6B477]/15 bg-[#1B1A18] px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3"
             >
               <textarea
                 value={input}
@@ -278,13 +277,13 @@ export default function AIChatbot() {
                   }
                 }}
                 placeholder="Ask me anything about Haswin..."
-                className="min-h-[42px] max-h-[140px] flex-1 resize-none rounded-xl border border-[#D6B477]/20 bg-[#22201D] px-3 py-2.5 text-sm leading-5 text-[#F5F1E8] outline-none transition-colors placeholder:text-[#AAA49A]/60 focus:border-[#D6B477]/65"
+                className="min-h-[48px] max-h-[140px] flex-1 resize-none overflow-y-auto rounded-xl border border-[#D6B477]/20 bg-[#22201D] px-3 py-3 text-sm leading-6 text-[#F5F1E8] outline-none transition-colors placeholder:text-[#AAA49A]/60 focus:border-[#D6B477]/65"
                 aria-label="Chat input"
               />
               <motion.button
                 onClick={handleSend}
                 disabled={!input.trim() || isTyping}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#D6B477]/35 bg-[#D6B477] text-[#11100F] transition-colors hover:bg-[#E8CEA0] disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#D6B477]/35 bg-[#D6B477] text-[#11100F] transition-colors hover:bg-[#E8CEA0] disabled:cursor-not-allowed disabled:opacity-40"
                 whileTap={{ scale: 0.9 }}
               >
                 <Send size={14} />

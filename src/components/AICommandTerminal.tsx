@@ -160,13 +160,13 @@ export default function AICommandTerminal() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 w-[min(92vw,760px)]"
+            className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] left-1/2 z-50 max-h-[calc(100dvh-6rem-env(safe-area-inset-bottom))] w-[calc(100vw-1.5rem)] max-w-[760px] -translate-x-1/2 overflow-y-auto sm:bottom-20 sm:w-[min(92vw,760px)]"
             initial={{ opacity: 0, y: 24, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.97 }}
             transition={{ type: "spring", stiffness: 260, damping: 26 }}
           >
-            <div className="glass-panel-strong rounded-3xl overflow-hidden border border-neon-blue/20 shadow-[0_0_80px_rgba(214,180,119,0.1)]">
+            <div className="glass-panel-strong overflow-hidden rounded-3xl border border-neon-blue/20 shadow-[0_0_80px_rgba(214,180,119,0.1)]">
               <div className="flex items-center justify-between px-4 md:px-5 py-3 border-b border-white/5 bg-white/[0.02]">
                 <div>
                   <div className="text-[10px] font-mono tracking-[0.4em] text-neon-blue/60">CYBER TERMINAL</div>
@@ -216,7 +216,7 @@ export default function AICommandTerminal() {
 
               <div className="px-4 md:px-5 py-4 border-t border-white/5 bg-white/[0.02]">
                 <form
-                  className="flex items-center gap-3"
+                  className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center"
                   onSubmit={(event) => {
                     event.preventDefault();
                     if (!executing) {
@@ -224,20 +224,20 @@ export default function AICommandTerminal() {
                     }
                   }}
                 >
-                  <div className="flex-1 flex items-center gap-2 rounded-2xl border border-neon-blue/15 bg-black/35 px-4 py-3">
-                    <span className="text-neon-blue/70 font-mono text-[11px] tracking-[0.24em]">HASWIN_SK&gt;</span>
+                  <div className="flex min-w-0 flex-1 items-center gap-2 rounded-2xl border border-neon-blue/15 bg-black/35 px-3 py-3 sm:px-4">
+                    <span className="shrink-0 text-[10px] font-mono tracking-[0.16em] text-neon-blue/70 sm:text-[11px] sm:tracking-[0.24em]">HASWIN_SK&gt;</span>
                     <input
                       ref={inputRef}
                       value={input}
                       onChange={(event) => setInput(event.target.value)}
-                      className="flex-1 bg-transparent text-sm text-white placeholder:text-white/20 outline-none font-mono terminal-cursor"
+                        className="min-w-0 flex-1 bg-transparent text-sm text-white placeholder:text-white/20 outline-none font-mono terminal-cursor"
                       placeholder="type a command"
                       aria-label="Terminal command input"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="px-4 py-3 rounded-2xl bg-neon-blue/10 text-neon-blue border border-neon-blue/20 hover:bg-neon-blue/20 transition-colors text-xs font-mono tracking-[0.24em]"
+                    className="w-full rounded-2xl border border-neon-blue/20 bg-neon-blue/10 px-4 py-3 text-xs font-mono tracking-[0.24em] text-neon-blue transition-colors hover:bg-neon-blue/20 sm:w-auto"
                     disabled={executing}
                   >
                     EXECUTE
