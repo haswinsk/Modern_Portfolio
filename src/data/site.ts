@@ -7,7 +7,7 @@ export const siteConfig = {
   linkedin: "https://www.linkedin.com/in/haswin-sk/",
   github: "https://github.com/haswinsk",
   instagram: "",
-  resumeUrl: "/HaswinSK-resume.pdf",
+  resumeUrl: "/Haswin_SK_Resume.pdf",
 };
 
 export const navLinks = [
