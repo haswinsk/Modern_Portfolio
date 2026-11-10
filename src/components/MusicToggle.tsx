@@ -5,7 +5,6 @@ import { Volume2, VolumeX } from "lucide-react";
 export default function MusicToggle() {
   const [playing, setPlaying] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-  const [noFile, setNoFile] = useState(false);
   // Refs to hold WebAudio nodes so we only create/resume them on user gesture
   const ctxRef = useRef<AudioContext | null>(null);
   const gainRef = useRef<GainNode | null>(null);
@@ -164,7 +163,6 @@ export default function MusicToggle() {
           return;
         } catch (playErr) {
           console.error("MusicToggle: HTMLAudioElement.play() failed:", playErr);
-          setNoFile(true);
           setPlaying(false);
           return;
         }
@@ -178,7 +176,6 @@ export default function MusicToggle() {
       }
     } catch (e) {
       console.error("MusicToggle: HTMLAudioElement fallback failed:", e);
-      setNoFile(true);
       setPlaying(false);
       return;
     }
@@ -187,7 +184,7 @@ export default function MusicToggle() {
   return (
     <motion.button
       className={
-        `fixed bottom-6 left-6 md:bottom-6 md:left-auto md:right-56 lg:right-64 z-[65] w-11 h-11 rounded-full glass-panel-strong flex items-center justify-center text-white/45 hover:text-neon-blue border border-white/10 transition-colors shadow-[0_0_20px_rgba(0,212,255,0.08)] ` +
+        `fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-4 z-[65] flex h-11 w-11 items-center justify-center rounded-full glass-panel-strong text-white/45 hover:text-neon-blue border border-white/10 transition-colors shadow-[0_0_20px_rgba(214,180,119,0.08)] sm:left-6 md:bottom-6 md:left-auto md:right-56 lg:right-64 ` +
         (chatOpen ? "hidden md:inline-flex" : "inline-flex")
       }
       onClick={togglePlaying}

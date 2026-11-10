@@ -1,20 +1,84 @@
-import { useEffect, useMemo, useState, useRef } from "react";
-import { AnimatePresence, motion, useInView } from "framer-motion";
-import { Layers3, Radar } from "lucide-react";
-import { skills, skillCategories } from "../data/skills";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
+import {
+  Braces,
+  Code2,
+  Database,
+  FolderKanban,
+  Layers3,
+  Monitor,
+  Pencil,
+  Radar,
+} from "lucide-react";
+import { skills, skillCategories, type Skill } from "../data/skills";
+import { projects } from "../data/projects";
 
 const skillNotes: Record<string, string> = {
-  React: "Interface architecture, motion systems, and component choreography for immersive product surfaces.",
+  React: "A JavaScript library for building fast, interactive and scalable user interfaces with a component-based architecture.",
   "Next.js": "Production-first routing and delivery patterns for fast, polished experiences.",
-  JavaScript: "The control layer for dynamic behavior, orchestration, and interactive systems.",
-  TypeScript: "Type-safe product logic and maintainable app architecture.",
+  JavaScript: "Dynamic behavior, orchestration, and interactive application logic.",
+  TypeScript: "Type-safe product logic and maintainable application architecture.",
   "Node.js": "Server-side coordination, APIs, and real-time service layers.",
   "Express.js": "Lightweight service composition and request orchestration.",
-  MongoDB: "Flexible persistence for content, profiles, and portfolio data.",
-  "Tailwind CSS": "Rapid visual systems with consistent spacing, glow, and glass layers.",
-  "UI/UX": "Layout rhythm, motion pacing, and clarity across complex interfaces.",
+  MongoDB: "Flexible persistence for content, profiles, and application data.",
+  "Tailwind CSS": "Consistent visual systems with efficient spacing and responsive layout.",
+  "UI/UX": "Layout rhythm, interaction clarity, and motion pacing across interfaces.",
   "Full Stack": "End-to-end product thinking across UI, APIs, and deployment.",
+  "AI Integration": "Connecting intelligent capabilities to practical product workflows.",
+  "Prompt Design": "Structured prompts for reliable AI-assisted experiences.",
 };
+
+const categoryIcons = {
+  All: Layers3,
+  Frontend: Monitor,
+  Backend: Layers3,
+  Language: Braces,
+  Database,
+  Design: Pencil,
+  Architecture: Layers3,
+};
+
+function getSkillLabel(level: number) {
+  if (level >= 90) return "Core Skill";
+  if (level >= 84) return "Familiar";
+  return "Currently Learning";
+}
+
+function getRelatedProjects(skillName: string) {
+  return projects.filter((project) => project.techStack.includes(skillName));
+}
+
+function SkillButton({
+  skill,
+  selected,
+  onSelect,
+  style,
+}: {
+  skill: Skill;
+  selected: boolean;
+  onSelect: () => void;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <motion.button
+      type="button"
+      onClick={onSelect}
+      style={style}
+      className={`rounded-xl border px-2 py-2 text-left transition-[border-color,background-color,box-shadow,color] duration-200 sm:px-3 sm:py-2.5 ${
+        selected
+          ? "border-[#D6B477] bg-[#D6B477]/15 text-[#F5F1E8] shadow-[0_0_24px_rgba(214,180,119,0.16)]"
+          : "border-[#D6B477]/20 bg-[#1B1A18]/95 text-[#AAA49A] hover:border-[#D6B477]/70 hover:bg-[#D6B477]/10 hover:text-[#F5F1E8] hover:shadow-[0_0_18px_rgba(214,180,119,0.12)]"
+      }`}
+    >
+      <div className="flex items-center gap-2">
+        <span className="h-2 w-2 shrink-0 rounded-full bg-[#D6B477] sm:h-2.5 sm:w-2.5" />
+        <span className="min-w-0 whitespace-nowrap font-mono text-[9px] leading-3 tracking-[0.02em] sm:text-[11px] sm:leading-4 sm:tracking-[0.03em]">
+          {skill.name}
+        </span>
+      </div>
+    </motion.button>
+  );
+}
 
 export default function TechArsenal() {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -28,13 +92,7 @@ export default function TechArsenal() {
       ? skills
       : skills.filter((skill) => skill.category === activeCategory);
 
-  const orbitalPoints = useMemo(() => {
-    return filtered.map((skill, index) => {
-      const angle = (index / Math.max(filtered.length, 1)) * Math.PI * 2 - Math.PI / 2;
-      const radius = 31 + (index % 3) * 2.5;
-      return { skill, angle, radius };
-    });
-  }, [filtered]);
+  const orbitalSkills = useMemo(() => filtered.slice(0, 10), [filtered]);
 
   useEffect(() => {
     if (!filtered.some((skill) => skill.name === selectedSkill.name) && filtered[0]) {
@@ -42,304 +100,216 @@ export default function TechArsenal() {
     }
   }, [filtered, selectedSkill.name]);
 
-  const handleSelect = (skillName: string) => {
-    const nextSkill = skills.find((skill) => skill.name === skillName);
-    if (nextSkill) {
-      setSelectedSkill(nextSkill);
-      setBurstId((current) => current + 1);
-    }
+  const selectSkill = (skill: Skill) => {
+    setSelectedSkill(skill);
+    setBurstId((current) => current + 1);
   };
 
   return (
     <section
       id="arsenal"
-      className="relative py-20 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="relative overflow-hidden px-4 pb-28 pt-14 sm:px-6 md:py-20 md:pb-32 lg:px-8 lg:py-24"
     >
-      <div className="absolute inset-0 bg-radial-glow opacity-40" />
-
-      <div ref={ref} className="relative z-10 max-w-6xl mx-auto">
+      <div ref={ref} className="relative z-10 mx-auto max-w-7xl">
         <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 30 }}
+          className="mb-9 text-center md:mb-12"
+          initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <span className="text-xs font-mono text-neon-blue/60 tracking-[0.3em] mb-3 block">
+          <span className="mb-3 block font-mono text-[10px] tracking-[0.3em] text-[#D6B477]/75">
             [ TECH_ARSENAL ]
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-            Neural <span className="text-gradient">Skill Matrix</span>
+          <h2 className="mb-4 text-4xl font-semibold tracking-[-0.03em] text-[#F5F1E8] sm:text-5xl md:text-6xl">
+            Technical <span className="text-[#D6B477]">Skills</span>
           </h2>
-          <p className="text-sm md:text-base text-white/40 max-w-xl mx-auto">
-            An interactive map of the tools, frameworks, and systems that power the portfolio.
+          <div className="mx-auto mb-5 h-px w-20 bg-gradient-to-r from-transparent via-[#D6B477] to-transparent" />
+          <p className="mx-auto max-w-2xl text-sm leading-7 text-[#AAA49A] md:text-base">
+            Technologies, frameworks and tools I use to build scalable
+            applications and intelligent products.
           </p>
         </motion.div>
 
         <motion.div
-          className="flex flex-wrap justify-center gap-2 mb-10"
-          initial={{ opacity: 0, y: 20 }}
+          className="mb-8 flex flex-wrap justify-center gap-3"
+          initial={{ opacity: 0, y: 16 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.15 }}
         >
-          {skillCategories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={`px-3 py-1.5 text-xs font-mono rounded-full border transition-all ${
-                activeCategory === category
-                  ? "text-neon-blue border-neon-blue/40 bg-neon-blue/10"
-                  : "text-white/40 border-white/10 hover:text-white/60 hover:border-white/20"
-              }`}
-            >
-              {category}
-            </button>
-          ))}
+          {skillCategories.map((category) => {
+            const Icon = categoryIcons[category as keyof typeof categoryIcons];
+            return (
+              <button
+                key={category}
+                type="button"
+                onClick={() => setActiveCategory(category)}
+                className={`flex min-w-[96px] items-center justify-center gap-2 rounded-full border px-4 py-2.5 text-xs transition-colors ${
+                  activeCategory === category
+                    ? "border-[#D6B477] bg-[#D6B477] text-[#11100F]"
+                    : "border-[#D6B477]/35 bg-[#1B1A18] text-[#F5F1E8] hover:border-[#D6B477] hover:text-[#E8CEA0]"
+                }`}
+              >
+                <Icon size={16} />
+                {category}
+              </button>
+            );
+          })}
         </motion.div>
 
         <motion.div
-          className="glass-panel rounded-[2rem] p-4 md:p-6 relative overflow-hidden border border-white/5"
-          initial={{ opacity: 0, y: 30 }}
+          className="grid items-stretch gap-5 lg:grid-cols-[1fr_1fr]"
+          initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.35 }}
+          transition={{ delay: 0.25 }}
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,212,255,0.08),transparent_44%)]" />
-          <div className="relative z-10 grid lg:grid-cols-[1.2fr_0.8fr] gap-6 items-stretch">
-            <div className="relative min-h-[560px] md:min-h-[600px] lg:min-h-[420px] rounded-[1.75rem] border border-white/5 bg-black/25 overflow-hidden flex items-center justify-center p-4 sm:p-6">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.08),transparent_42%)]" />
-              <div className="absolute inset-0 bg-grid-pattern opacity-20" />
-              <motion.div
-                className="absolute inset-8 sm:inset-10 rounded-full border border-neon-blue/10"
-                animate={{ scale: [1, 1.02, 1], opacity: [0.3, 0.55, 0.3] }}
-                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-              />
-
-              <div className="relative w-full max-w-[560px] mx-auto hidden md:block aspect-square">
-                <motion.div
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 lg:w-48 lg:h-48 rounded-full glass-panel-strong border border-neon-blue/25 flex items-center justify-center text-center px-5 shadow-[0_0_50px_rgba(0,212,255,0.1)]"
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <div className="absolute inset-4 rounded-full border border-white/5" />
-                  <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(0,212,255,0.12),transparent_60%)]" />
-                  <div className="relative z-10 flex flex-col items-center justify-center">
-                    <div className="text-[9px] lg:text-[10px] font-mono tracking-[0.34em] text-neon-blue/55 mb-2">NEURAL CORE</div>
-                    <div className="text-2xl lg:text-4xl font-bold text-white">{selectedSkill.level}%</div>
-                    <div className="max-w-[9rem] text-[9px] lg:text-xs font-mono text-white/35 mt-2 tracking-[0.22em] leading-tight truncate">
-                      {selectedSkill.name.toUpperCase()}
-                    </div>
-                  </div>
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={`${selectedSkill.name}-${burstId}`}
-                      className="absolute inset-0 pointer-events-none"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    >
-                      {[0, 1, 2, 3].map((index) => (
-                        <motion.span
-                          key={index}
-                          className="absolute left-1/2 top-1/2 block w-2 h-2 rounded-full"
-                          style={{ backgroundColor: selectedSkill.color, boxShadow: `0 0 18px ${selectedSkill.color}` }}
-                          initial={{ x: 0, y: 0, opacity: 0.9, scale: 0.6 }}
-                          animate={{
-                            x: Math.cos((index / 4) * Math.PI * 2) * 105,
-                            y: Math.sin((index / 4) * Math.PI * 2) * 105,
-                            opacity: 0,
-                            scale: 0,
-                          }}
-                          transition={{ duration: 0.8, ease: "easeOut" }}
-                        />
-                      ))}
-                    </motion.div>
-                  </AnimatePresence>
-                </motion.div>
-
-                {orbitalPoints.map(({ skill, angle, radius }, index) => (
-                  <motion.button
-                    key={skill.name}
-                    className={`absolute z-10 w-[6.75rem] lg:w-32 -translate-x-1/2 -translate-y-1/2 rounded-full px-3 py-2 text-left border transition-all backdrop-blur-md ${
-                      selectedSkill.name === skill.name
-                        ? "bg-neon-blue/12 border-neon-blue/35 text-white"
-                        : "bg-white/[0.03] border-white/10 text-white/70 hover:text-white hover:border-neon-blue/20"
-                    }`}
+          <div className="relative min-h-0 overflow-hidden rounded-2xl border border-[#D6B477]/35 bg-[#1B1A18] p-2 sm:min-h-[520px] sm:p-6">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(214,180,119,0.1),transparent_52%)]" />
+            <div className="relative mx-auto aspect-square w-full max-w-[560px]">
+              <div className="pointer-events-none absolute left-1/2 top-1/2 h-[78%] w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#D6B477]/25" />
+              <div className="pointer-events-none absolute left-1/2 top-1/2 h-[58%] w-[58%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-[#D6B477]/25" />
+              <div className="pointer-events-none absolute left-1/2 top-1/2 h-[40%] w-[40%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#D6B477]/15" />
+              <div className="tech-radar-sweep pointer-events-none absolute left-[14%] top-[14%] h-[72%] w-[72%] rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,transparent_285deg,rgba(214,180,119,0.16)_330deg,transparent_360deg)]" />
+              <div className="tech-radar-needle pointer-events-none absolute bottom-1/2 left-1/2 z-[1] h-[39%] w-px bg-gradient-to-t from-[#D6B477]/80 via-[#E8CEA0] to-transparent shadow-[0_0_8px_rgba(232,206,160,0.7)]">
+                <span className="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-[#E8CEA0] shadow-[0_0_12px_rgba(232,206,160,0.95)]" />
+              </div>
+              <div className="pointer-events-none absolute left-1/2 top-1/2 z-[1] h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#E8CEA0] shadow-[0_0_12px_rgba(232,206,160,0.9)]" />
+              {orbitalSkills.map((skill, index) => {
+                const angle = (index / orbitalSkills.length) * Math.PI * 2 - Math.PI / 2;
+                return (
+                  <span
+                    key={`connection-${skill.name}`}
+                    aria-hidden="true"
+                    className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-px bg-gradient-to-r from-[#D6B477]/45 to-transparent"
                     style={{
-                      left: `calc(50% + ${Math.cos(angle) * radius}%)`,
-                      top: `calc(50% + ${Math.sin(angle) * radius}%)`,
-                      boxShadow: selectedSkill.name === skill.name ? `0 0 24px ${skill.color}18` : undefined,
+                      width: "36%",
+                      transformOrigin: "left center",
+                      transform: `rotate(${(angle * 180) / Math.PI}deg)`,
                     }}
-                    onClick={() => handleSelect(skill.name)}
-                    initial={{ opacity: 0, scale: 0.75 }}
-                    animate={isInView ? { opacity: 1, scale: 1, y: [0, index % 2 === 0 ? -5 : 5, 0] } : {}}
-                    transition={{ duration: 0.55, delay: 0.12 + index * 0.04, y: { duration: 5 + index * 0.3, repeat: Infinity, ease: "easeInOut" } }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="w-2.5 h-2.5 rounded-full shrink-0"
-                        style={{ backgroundColor: skill.color, boxShadow: `0 0 12px ${skill.color}50` }}
-                      />
-                      <span className="text-[10px] lg:text-[11px] font-mono tracking-[0.14em] whitespace-nowrap leading-none truncate">
-                        {skill.name}
-                      </span>
-                    </div>
-                    <div className="mt-1 h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                  </motion.button>
-                ))}
+                  />
+                );
+              })}
+              <motion.div
+                key={`${selectedSkill.name}-${burstId}`}
+                className="absolute left-1/2 top-1/2 z-[2] flex h-[27%] w-[27%] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-[28%] border border-[#D6B477] bg-[#201F1C] text-center shadow-[0_0_28px_rgba(214,180,119,0.14)] sm:h-32 sm:w-32 lg:h-36 lg:w-36"
+                initial={{ scale: 0.9, opacity: 0.7 }}
+                animate={{ scale: 1, opacity: 1 }}
+              >
+                <Code2 className="mb-1 h-5 w-5 text-[#E8CEA0] sm:mb-2 sm:h-[30px] sm:w-[30px]" />
+                <span className="text-[clamp(0.75rem,2.4vw,1.125rem)] font-semibold text-[#F5F1E8]">Tech Stack</span>
+                <span className="mt-1 px-1 text-center font-mono text-[8px] leading-3 text-[#D6B477] sm:px-2 sm:text-[9px] sm:leading-4">
+                  {getSkillLabel(selectedSkill.level)}
+                </span>
+              </motion.div>
 
-                <motion.div
-                  className="absolute inset-0 pointer-events-none"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
-                >
-                  <div className="absolute left-1/2 top-0 h-1/2 w-px bg-gradient-to-b from-transparent via-neon-blue/45 to-transparent origin-bottom" />
-                </motion.div>
+              {orbitalSkills.map((skill, index) => {
+                const angle = (index / orbitalSkills.length) * Math.PI * 2 - Math.PI / 2;
+                return (
+                  <SkillButton
+                    key={skill.name}
+                    skill={skill}
+                    selected={selectedSkill.name === skill.name}
+                    onSelect={() => selectSkill(skill)}
+                    style={{
+                      position: "absolute",
+                      left: `${50 + Math.cos(angle) * 33}%`,
+                      top: `${50 + Math.sin(angle) * 33}%`,
+                      transform: "translate(-50%, -50%)",
+                      width: "clamp(78px, 21%, 132px)",
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="flex min-h-[520px] flex-col rounded-2xl border border-[#D6B477]/45 bg-[#1B1A18] p-6 sm:p-8">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="font-serif text-4xl font-semibold text-[#F5F1E8]">
+                  {selectedSkill.name}
+                </h3>
+                <span className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#D6B477]/35 bg-[#D6B477]/10 px-3 py-1.5 text-xs text-[#E8CEA0]">
+                  <Layers3 size={14} />
+                  {selectedSkill.category}
+                </span>
               </div>
-
-              <div className="relative w-full md:hidden flex flex-col items-center justify-center gap-5 py-4">
-                <motion.div
-                  className="relative w-32 h-32 sm:w-36 sm:h-36 rounded-full glass-panel-strong border border-neon-blue/25 flex items-center justify-center text-center px-4 shadow-[0_0_50px_rgba(0,212,255,0.1)]"
-                  animate={{ y: [0, -6, 0], rotate: [0, 1.5, 0] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <div className="absolute inset-3 rounded-full border border-white/5" />
-                  <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(0,212,255,0.12),transparent_60%)]" />
-                  <div className="relative z-10 flex flex-col items-center justify-center">
-                    <div className="text-[8px] font-mono tracking-[0.28em] text-neon-blue/55 mb-1">NEURAL CORE</div>
-                    <div className="text-2xl font-bold text-white leading-none">{selectedSkill.level}%</div>
-                    <div className="mt-2 max-w-[6.5rem] text-[9px] font-mono text-white/35 tracking-[0.18em] leading-tight truncate">
-                      {selectedSkill.name.toUpperCase()}
-                    </div>
-                  </div>
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={`${selectedSkill.name}-${burstId}-mobile`}
-                      className="absolute inset-0 pointer-events-none"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    >
-                      {[0, 1, 2, 3].map((index) => (
-                        <motion.span
-                          key={index}
-                          className="absolute left-1/2 top-1/2 block w-2 h-2 rounded-full"
-                          style={{ backgroundColor: selectedSkill.color, boxShadow: `0 0 18px ${selectedSkill.color}` }}
-                          initial={{ x: 0, y: 0, opacity: 0.9, scale: 0.6 }}
-                          animate={{
-                            x: Math.cos((index / 4) * Math.PI * 2) * 80,
-                            y: Math.sin((index / 4) * Math.PI * 2) * 80,
-                            opacity: 0,
-                            scale: 0,
-                          }}
-                          transition={{ duration: 0.8, ease: "easeOut" }}
-                        />
-                      ))}
-                    </motion.div>
-                  </AnimatePresence>
-                </motion.div>
-
-                <div className="grid grid-cols-2 gap-2 w-full">
-                  {filtered.map((skill) => (
-                    <motion.button
-                      key={skill.name}
-                      onClick={() => handleSelect(skill.name)}
-                      className={`rounded-2xl border px-3 py-3 text-left backdrop-blur-md transition-all ${
-                        selectedSkill.name === skill.name
-                          ? "bg-neon-blue/12 border-neon-blue/35 text-white"
-                          : "bg-white/[0.03] border-white/10 text-white/70"
-                      }`}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span
-                          className="w-2.5 h-2.5 rounded-full shrink-0"
-                          style={{ backgroundColor: skill.color, boxShadow: `0 0 12px ${skill.color}50` }}
-                        />
-                        <span className="text-[10px] font-mono tracking-[0.12em] truncate leading-none">
-                          {skill.name}
-                        </span>
-                      </div>
-                      <div className="mt-2 h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                      <div className="mt-2 text-[10px] font-mono text-white/35">{skill.level}%</div>
-                    </motion.button>
-                  ))}
-                </div>
+              <div className="rounded-xl border border-[#D6B477]/35 bg-[#201F1C] p-3 text-[#D6B477]">
+                <Radar size={28} />
               </div>
-
             </div>
 
-            <div className="flex flex-col gap-4">
-              <div className="glass-panel rounded-[1.5rem] p-5 border border-white/5 h-full">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <div className="text-[10px] font-mono tracking-[0.34em] text-neon-blue/55">SKILL MATRIX</div>
-                    <h3 className="text-2xl font-bold text-white mt-1">{selectedSkill.name}</h3>
-                  </div>
-                  <div className="w-12 h-12 rounded-full border border-neon-blue/20 bg-neon-blue/8 flex items-center justify-center">
-                    <Radar size={18} className="text-neon-blue" />
-                  </div>
-                </div>
+            <p className="mt-7 text-base leading-7 text-[#AAA49A]">
+              {skillNotes[selectedSkill.name]}
+            </p>
 
-                <div className="flex items-center gap-2 text-[10px] font-mono tracking-[0.22em] text-white/35 mb-4">
-                  <Layers3 size={11} /> {selectedSkill.category}
-                </div>
+            <div className="mt-7">
+              <div className="mb-3 flex items-center justify-between">
+                <span className="font-mono text-sm tracking-[0.12em] text-[#F5F1E8]">
+                  Skill level
+                </span>
+                <span className="font-mono text-sm text-[#E8CEA0]">
+                  {getSkillLabel(selectedSkill.level)}
+                </span>
+              </div>
+              <div className="h-3 overflow-hidden rounded-full bg-[#11100F]">
+                <motion.div
+                  className="h-full rounded-full bg-[#E8CEA0]"
+                  animate={{ width: `${selectedSkill.level}%` }}
+                  transition={{ duration: 0.7 }}
+                />
+              </div>
+            </div>
 
-                <div className="h-2 rounded-full bg-white/5 overflow-hidden mb-3">
-                  <motion.div
-                    className="h-full rounded-full"
-                    style={{ background: `linear-gradient(90deg, ${selectedSkill.color}, ${selectedSkill.color}80)` }}
-                    animate={{ width: `${selectedSkill.level}%` }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                  />
-                </div>
-
-                <p className="text-sm text-white/55 leading-relaxed mb-5">
-                  {skillNotes[selectedSkill.name] ?? "A key part of the portfolio's technical lattice."}
-                </p>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl border border-white/5 bg-white/[0.03] px-3 py-3">
-                    <div className="text-[10px] font-mono tracking-[0.22em] text-white/35 mb-1">PROFICIENCY</div>
-                    <div className="text-xl font-semibold text-white">{selectedSkill.level}%</div>
-                  </div>
-                  <div className="rounded-2xl border border-white/5 bg-white/[0.03] px-3 py-3">
-                    <div className="text-[10px] font-mono tracking-[0.22em] text-white/35 mb-1">CATEGORY</div>
-                    <div className="text-lg font-semibold text-white">{selectedSkill.category}</div>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {filtered.slice(0, 4).map((skill) => (
-                    <button
-                      key={skill.name}
-                      onClick={() => handleSelect(skill.name)}
-                      className={`px-2.5 py-1 rounded-full text-[10px] font-mono tracking-[0.16em] transition-colors border ${
-                        selectedSkill.name === skill.name
-                          ? "bg-neon-blue/10 text-neon-blue border-neon-blue/25"
-                          : "bg-white/[0.03] text-white/45 border-white/5 hover:text-white hover:border-neon-blue/15"
-                      }`}
-                    >
-                      {skill.name}
-                    </button>
-                  ))}
+            <div className="mt-8 grid grid-cols-2 gap-3">
+              <div className="rounded-xl border border-[#D6B477]/30 bg-[#201F1C] p-4">
+                <span className="font-mono text-[10px] text-[#D6B477]">CATEGORY</span>
+                <div className="mt-2 text-base text-[#F5F1E8]">{selectedSkill.category}</div>
+              </div>
+              <div className="rounded-xl border border-[#D6B477]/30 bg-[#201F1C] p-4">
+                <span className="font-mono text-[10px] text-[#D6B477]">SELECTED STATUS</span>
+                <div className="mt-2 text-base text-[#F5F1E8]">
+                  {getSkillLabel(selectedSkill.level)}
                 </div>
               </div>
+            </div>
 
-              <div className="glass-panel rounded-[1.5rem] p-4 border border-white/5">
-                <div className="text-[10px] font-mono tracking-[0.34em] text-neon-blue/55 mb-3">ACCESS CHANNELS</div>
+            <div className="mt-7 border-t border-[#D6B477]/15 pt-6">
+              <span className="mb-3 block font-mono text-[10px] tracking-[0.18em] text-[#D6B477]">
+                RELATED TECHNOLOGIES
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {filtered.slice(0, 4).map((skill) => (
+                  <button
+                    key={skill.name}
+                    type="button"
+                    onClick={() => selectSkill(skill)}
+                    className="rounded-full border border-[#D6B477]/35 bg-[#201F1C] px-3 py-1.5 text-xs text-[#F5F1E8] transition-colors hover:border-[#D6B477] hover:text-[#E8CEA0]"
+                  >
+                    {skill.name}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-6 border-t border-[#D6B477]/15 pt-6">
+                <span className="mb-3 flex items-center gap-2 font-mono text-[10px] tracking-[0.18em] text-[#D6B477]">
+                  <FolderKanban size={14} />
+                  USED IN PROJECTS
+                </span>
                 <div className="flex flex-wrap gap-2">
-                  {skillCategories.map((category) => (
-                    <button
-                      key={category}
-                      onClick={() => setActiveCategory(category)}
-                      className={`px-3 py-1.5 text-[10px] font-mono tracking-[0.22em] rounded-full border transition-colors ${
-                        activeCategory === category
-                          ? "text-neon-blue border-neon-blue/30 bg-neon-blue/10"
-                          : "text-white/40 border-white/10 hover:text-white hover:border-white/20"
-                      }`}
-                    >
-                      {category}
-                    </button>
-                  ))}
+                  {getRelatedProjects(selectedSkill.name).length ? (
+                    getRelatedProjects(selectedSkill.name).map((project) => (
+                      <span
+                        key={project.id}
+                        className="rounded-md border border-[#D6B477]/20 bg-[#201F1C] px-2.5 py-1.5 text-xs text-[#F5F1E8]/80"
+                      >
+                        {project.title}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-xs text-[#AAA49A]">
+                      No matching project listed in the portfolio data.
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

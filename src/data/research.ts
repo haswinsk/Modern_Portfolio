@@ -51,7 +51,7 @@ export const research: Project[] = [
     ],
     category: "SIH Research Concept",
     status: "Research Prototype",
-    color: "#22c55e",
+    color: "#D6B477",
   },
   {
     id: "falcon-fiber",
@@ -77,7 +77,7 @@ export const research: Project[] = [
     ],
     category: "SIH Research Concept",
     status: "Research Prototype",
-    color: "#f59e0b",
+    color: "#D6B477",
   },
   {
     id: "aqua-guardian",
@@ -103,7 +103,7 @@ export const research: Project[] = [
     ],
     category: "SIH Research Concept",
     status: "Research Prototype",
-    color: "#06b6d4",
+    color: "#D6B477",
   },
   {
     id: "rhizomatureguard",

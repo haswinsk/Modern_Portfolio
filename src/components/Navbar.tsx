@@ -39,8 +39,8 @@ export default function Navbar() {
       <motion.nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "glass-panel-strong py-3"
-            : "bg-transparent py-5"
+            ? "glass-panel-strong border-b border-[#D6B477]/20 py-3"
+            : "border-b border-[#D6B477]/10 bg-[#11100F]/70 py-5 backdrop-blur-sm"
         }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
@@ -54,12 +54,10 @@ export default function Navbar() {
               e.preventDefault();
               handleNavClick("#hero");
             }}
-            className="inline-flex items-center whitespace-nowrap text-base sm:text-lg md:text-xl font-bold tracking-wider text-white hover:text-neon-blue transition-colors shrink-0"
+            className="inline-flex items-center whitespace-nowrap text-base font-semibold tracking-wide text-[#F5F1E8] transition-colors hover:text-[#E8CEA0] sm:text-lg md:text-xl shrink-0"
             whileHover={{ scale: 1.05 }}
           >
-            <span className="text-neon-blue">[</span> HASWIN{" "}
-            <span className="text-purple-accent">SK</span>{" "}
-            <span className="text-neon-blue">]</span>
+            <span className="text-[#D6B477]">[</span>HASWIN<span className="text-[#D6B477]">SK</span><span className="text-[#D6B477]">]</span>
           </motion.a>
 
           {/* Desktop nav */}
@@ -72,15 +70,15 @@ export default function Navbar() {
                   onClick={() => handleNavClick(link.href)}
                   className={`relative px-3 py-2 text-xs tracking-widest font-mono transition-colors ${
                     isActive
-                      ? "text-neon-blue"
-                      : "text-white/60 hover:text-white"
+                      ? "text-[#E8CEA0]"
+                      : "text-[#A6A198] hover:text-[#F5F1E8]"
                   }`}
                   whileHover={{ y: -2 }}
                 >
                   {link.label}
                   {isActive && (
                     <motion.div
-                      className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-px bg-neon-blue"
+                      className="absolute bottom-0 left-1/2 h-0.5 w-7 -translate-x-1/2 rounded-full bg-[#D6B477]"
                       layoutId="nav-indicator"
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     />
@@ -92,7 +90,7 @@ export default function Navbar() {
 
           {/* Mobile menu button */}
           <motion.button
-            className="lg:hidden p-2 text-white/80 hover:text-neon-blue transition-colors shrink-0"
+            className="lg:hidden p-2 text-[#F5F1E8]/80 transition-colors hover:text-[#E8CEA0] shrink-0"
             onClick={() => setMobileOpen(!mobileOpen)}
             whileTap={{ scale: 0.9 }}
           >

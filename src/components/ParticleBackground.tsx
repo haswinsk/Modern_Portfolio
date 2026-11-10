@@ -70,7 +70,10 @@ export default function ParticleBackground({
 
     const particleCount = (function () {
       if (isMobileRef.current) return dense ? 16 : 8;
-      if (navigator.connection && (navigator as any).connection.saveData) return dense ? 28 : 16;
+      const connection = (navigator as Navigator & {
+        connection?: { saveData?: boolean };
+      }).connection;
+      if (connection?.saveData) return dense ? 28 : 16;
       return dense ? 48 : 28;
     })();
 

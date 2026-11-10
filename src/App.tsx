@@ -1,11 +1,6 @@
-import { lazy, Suspense, useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import LoadingScreen from "./components/LoadingScreen";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Navbar from "./components/Navbar";
-import ParticleBackground from "./components/ParticleBackground";
-import CinematicCursor from "./components/CinematicCursor";
-import Scanlines from "./components/Scanlines";
-import DataStream from "./components/DataStream";
 import HeroSection from "./components/HeroSection";
 import AboutSection from "./components/AboutSection";
 import MissionControl from "./components/MissionControl";
@@ -19,9 +14,7 @@ import AICommandTerminal from "./components/AICommandTerminal";
 import EasterEgg from "./components/EasterEgg";
 import MusicToggle from "./components/MusicToggle";
 import Footer from "./components/Footer";
-import { useDeviceProfile } from "./hooks/useDeviceProfile";
-
-const CinematicBackdrop = lazy(() => import("./components/CinematicBackdrop"));
+import CinematicCursor from "./components/CinematicCursor";
 
 function VisitorCounter() {
   const [count, setCount] = useState(0);
@@ -39,7 +32,7 @@ function VisitorCounter() {
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 2 }}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+      <span className="w-1.5 h-1.5 rounded-full bg-[#D6B477]" />
       <span className="text-[10px] font-mono text-white/40">
         VISITORS: {count.toString().padStart(4, "0")}
       </span>
@@ -48,13 +41,6 @@ function VisitorCounter() {
 }
 
 export default function App() {
-  const [loading, setLoading] = useState(true);
-  const deviceProfile = useDeviceProfile();
-
-  const handleLoadingComplete = useCallback(() => {
-    setLoading(false);
-  }, []);
-
   useEffect(() => {
     // Removed global `c` key toggle to avoid accidental chatbot toggles.
     // If you want a keyboard shortcut later, re-enable with a different key.
@@ -63,42 +49,24 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-cyber-black text-white overflow-x-hidden">
-      <AnimatePresence mode="wait">
-        {loading && (
-          <LoadingScreen key="loading" onComplete={handleLoadingComplete} />
-        )}
-      </AnimatePresence>
 
-      {!loading && (
+      <div>
+        <main>
+          <HeroSection
+          />
+        </main>
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.9, ease: "easeOut" }}
         >
           {/* Global effects */}
-          {!deviceProfile.isMobile && !deviceProfile.isReducedMotion && (
-            <Suspense fallback={null}>
-              <CinematicBackdrop
-                enabled={!deviceProfile.isLowPower}
-                mobile={deviceProfile.isMobile}
-                reducedMotion={deviceProfile.isReducedMotion}
-              />
-            </Suspense>
-          )}
-          <ParticleBackground
-            dense={!deviceProfile.isMobile && !deviceProfile.isLowPower}
-            reducedMotion={deviceProfile.isReducedMotion}
-          />
-          {!deviceProfile.isMobile && !deviceProfile.isReducedMotion && <CinematicCursor />}
-          {!deviceProfile.isReducedMotion && <Scanlines />}
-          {!deviceProfile.isMobile && !deviceProfile.isReducedMotion && <DataStream />}
-
           {/* Navigation */}
           <Navbar />
 
           {/* Main content */}
           <main>
-            <HeroSection />
             <AboutSection />
             <MissionControl />
             <ResearchSection />
@@ -117,8 +85,9 @@ export default function App() {
           <EasterEgg />
           <MusicToggle />
           <VisitorCounter />
+          <CinematicCursor />
         </motion.div>
-      )}
+      </div>
     </div>
   );
 }

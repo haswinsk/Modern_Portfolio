@@ -17,8 +17,12 @@ export function useDeviceProfile(): DeviceProfile {
     const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const updateProfile = () => {
       const isMobile = window.innerWidth < 768;
-      const connection = navigator.connection as any;
-      const deviceMemory = (navigator as any).deviceMemory as number | undefined;
+      const connection = (navigator as Navigator & {
+        connection?: { saveData?: boolean };
+      }).connection;
+      const deviceMemory = (navigator as Navigator & {
+        deviceMemory?: number;
+      }).deviceMemory;
       const saveData = Boolean(connection?.saveData);
       const lowMemory = typeof deviceMemory === "number" && deviceMemory > 0 && deviceMemory <= 4;
 

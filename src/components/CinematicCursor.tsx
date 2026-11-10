@@ -1,297 +1,262 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
-interface TrailParticle {
-  id: number;
-  x: number;
-  y: number;
-  opacity: number;
-  size: number;
-  color: string;
+type Point = { x: number; y: number };
+type HoverMode = "default" | "interactive" | "project" | "input";
+
+function supportsFinePointer() {
+  return (
+    window.innerWidth >= 768 &&
+    !("ontouchstart" in window) &&
+    navigator.maxTouchPoints === 0 &&
+    window.matchMedia("(pointer: fine)").matches &&
+    window.matchMedia("(hover: hover)").matches
+  );
 }
 
 export default function CinematicCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
+  const secondaryRingRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
-  const particlesRef = useRef<TrailParticle[]>([]);
-  const particlesContainerRef = useRef<HTMLDivElement>(null);
-  const [isTouch, setIsTouch] = useState(false);
-  const [isFinePointer, setIsFinePointer] = useState(true);
-  const [isHovering, setIsHovering] = useState(false);
-  const [isClicking, setIsClicking] = useState(false);
-  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
-  const mouseRef = useRef({ x: -100, y: -100 });
-  const ringPosRef = useRef({ x: -100, y: -100 });
-  const particleIdRef = useRef(0);
-  const lastParticleTime = useRef(0);
-  const rafRef = useRef<number>(0);
-
-  const colors = ["#00d4ff", "#a855f7", "#00ff88", "#f472b6", "#06b6d4"];
+  const particleRefs = useRef<Array<HTMLSpanElement | null>>([]);
+  const pointerRef = useRef<Point>({ x: -100, y: -100 });
+  const ringPositionRef = useRef<Point>({ x: -100, y: -100 });
+  const secondaryPositionRef = useRef<Point>({ x: -100, y: -100 });
+  const trailRef = useRef<Point[]>(
+    Array.from({ length: 7 }, () => ({ x: -100, y: -100 }))
+  );
+  const previousPointerRef = useRef<Point>({ x: -100, y: -100 });
+  const speedRef = useRef(0);
+  const hoverModeRef = useRef<HoverMode>("default");
+  const reducedMotionRef = useRef(false);
+  const clickingRef = useRef(false);
+  const frameRef = useRef<number>(0);
+  const [enabled, setEnabled] = useState(false);
+  const [hoverMode, setHoverMode] = useState<HoverMode>("default");
+  const [clickPoint, setClickPoint] = useState<Point | null>(null);
+  const [clickId, setClickId] = useState(0);
 
   useEffect(() => {
-    const touchCapable = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-    const coarsePointer = window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(hover: none)").matches;
+    const updatePointerMode = () => setEnabled(supportsFinePointer());
+    updatePointerMode();
+    reducedMotionRef.current = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
 
-    setIsFinePointer(!touchCapable && !coarsePointer && window.innerWidth >= 768);
+    const mediaQueries = [
+      window.matchMedia("(pointer: fine)"),
+      window.matchMedia("(hover: hover)"),
+    ];
+    mediaQueries.forEach((query) =>
+      query.addEventListener("change", updatePointerMode)
+    );
+    window.addEventListener("resize", updatePointerMode, { passive: true });
 
-    if (touchCapable || coarsePointer || window.innerWidth < 768) {
-      setIsTouch(true);
-      return;
-    }
+    const handleMove = (event: MouseEvent) => {
+      pointerRef.current = { x: event.clientX, y: event.clientY };
+      const target = event.target as HTMLElement;
+      const nextMode: HoverMode = target.closest(
+        "input, textarea, select, [contenteditable='true']"
+      )
+        ? "input"
+        : target.closest(".project-card, [data-cursor='view']")
+          ? "project"
+          : target.closest(
+                "button, a, [role='button'], .cursor-interactive"
+              )
+            ? "interactive"
+            : "default";
 
-    const handleMove = (e: MouseEvent) => {
-      mouseRef.current = { x: e.clientX, y: e.clientY };
-      setCursorPos({ x: e.clientX, y: e.clientY });
+      if (hoverModeRef.current !== nextMode) {
+        hoverModeRef.current = nextMode;
+        setHoverMode(nextMode);
+      }
     };
 
-    const handleDown = () => {
-      setIsClicking(true);
-      setTimeout(() => setIsClicking(false), 200);
+    const handleDown = (event: MouseEvent) => {
+      clickingRef.current = true;
+      setClickPoint({ x: event.clientX, y: event.clientY });
+      setClickId((value) => value + 1);
     };
 
     const handleUp = () => {
-      setIsClicking(false);
-    };
-
-    // Check if hovering interactive elements
-    const handleOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const interactive = target.closest(
-        "button, a, input, textarea, [role='button'], .project-card, .cursor-interactive"
-      );
-      setIsHovering(!!interactive);
-    };
-
-    const addParticle = (x: number, y: number) => {
-      const now = Date.now();
-      if (now - lastParticleTime.current < 30) return;
-      lastParticleTime.current = now;
-
-      const particle: TrailParticle = {
-        id: particleIdRef.current++,
-        x,
-        y,
-        opacity: 0.8,
-        size: Math.random() * 3 + 1,
-        color: colors[Math.floor(Math.random() * colors.length)],
-      };
-
-      particlesRef.current = [...particlesRef.current.slice(-20), particle];
-    };
-
-    let frameCount = 0;
-    const animate = () => {
-      frameCount++;
-      const { x, y } = mouseRef.current;
-
-      // Smooth ring follow
-      const ringLag = 0.12;
-      ringPosRef.current.x += (x - ringPosRef.current.x) * ringLag;
-      ringPosRef.current.y += (y - ringPosRef.current.y) * ringLag;
-
-      // Update DOM directly for performance
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${x - 4}px, ${y - 4}px)`;
-      }
-      if (ringRef.current) {
-        const scale = isHovering ? 1.8 : isClicking ? 0.6 : 1;
-        ringRef.current.style.transform = `translate(${ringPosRef.current.x - 20}px, ${ringPosRef.current.y - 20}px) scale(${scale})`;
-      }
-      if (glowRef.current) {
-        glowRef.current.style.transform = `translate(${x - 60}px, ${y - 60}px)`;
-        glowRef.current.style.opacity = isHovering ? "0.15" : "0.08";
-      }
-
-      // Add trail particles
-      if (frameCount % 2 === 0) {
-        addParticle(x + (Math.random() - 0.5) * 8, y + (Math.random() - 0.5) * 8);
-      }
-
-      // Render particles
-      if (particlesContainerRef.current) {
-        const particles = particlesRef.current;
-        particles.forEach((p) => {
-          p.opacity *= 0.96;
-          p.y -= 0.3;
-        });
-
-        // Remove faded particles
-        particlesRef.current = particles.filter((p) => p.opacity > 0.05);
-
-        // Build DOM for particles
-        let html = "";
-        for (const p of particlesRef.current) {
-          html += `<div style="position:absolute;left:${p.x}px;top:${p.y}px;width:${p.size}px;height:${p.size}px;border-radius:50%;background:${p.color};opacity:${p.opacity};box-shadow:0 0 ${p.size * 2}px ${p.color}40;pointer-events:none;"></div>`;
-        }
-        particlesContainerRef.current.innerHTML = html;
-      }
-
-      rafRef.current = requestAnimationFrame(animate);
+      clickingRef.current = false;
     };
 
     window.addEventListener("mousemove", handleMove, { passive: true });
     window.addEventListener("mousedown", handleDown, { passive: true });
     window.addEventListener("mouseup", handleUp, { passive: true });
-    window.addEventListener("mouseover", handleOver, { passive: true });
 
-    const updatePointerMode = () => {
-      const finePointer = !(
-        "ontouchstart" in window ||
-        navigator.maxTouchPoints > 0 ||
-        window.matchMedia("(pointer: coarse)").matches ||
-        window.matchMedia("(hover: none)").matches ||
-        window.innerWidth < 768
-      );
-      setIsFinePointer(finePointer);
-      setIsTouch(!finePointer);
+    const animate = () => {
+      const pointer = pointerRef.current;
+      const ring = ringPositionRef.current;
+      const secondary = secondaryPositionRef.current;
+      const reducedMotion = reducedMotionRef.current;
+      ring.x += (pointer.x - ring.x) * (reducedMotion ? 1 : 0.3);
+      ring.y += (pointer.y - ring.y) * (reducedMotion ? 1 : 0.3);
+      secondary.x += (pointer.x - secondary.x) * (reducedMotion ? 1 : 0.075);
+      secondary.y += (pointer.y - secondary.y) * (reducedMotion ? 1 : 0.075);
+
+      const previousPointer = previousPointerRef.current;
+      const movement = Math.hypot(pointer.x - previousPointer.x, pointer.y - previousPointer.y);
+      speedRef.current += (Math.min(movement, 32) - speedRef.current) * 0.2;
+      previousPointerRef.current = pointer;
+
+      trailRef.current.forEach((particle, index, particles) => {
+        const target = index === 0 ? pointer : particles[index - 1];
+        const factor = reducedMotion ? 1 : Math.max(0.16, 0.34 - index * 0.025);
+        particle.x += (target.x - particle.x) * factor;
+        particle.y += (target.y - particle.y) * factor;
+      });
+
+      const mode = hoverModeRef.current;
+      const ringScale = mode === "project" ? 2.2 : mode === "interactive" ? 1.65 : mode === "input" ? 0.72 : 1;
+      const clickScale = clickingRef.current ? 0.72 : 1;
+
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate3d(${pointer.x - 3}px, ${pointer.y - 3}px, 0) scale(${clickScale})`;
+      }
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translate3d(${ring.x - 20}px, ${ring.y - 20}px, 0) scale(${ringScale})`;
+      }
+      if (secondaryRingRef.current) {
+        secondaryRingRef.current.style.transform = `translate3d(${secondary.x - 27}px, ${secondary.y - 27}px, 0) scale(${mode === "project" ? 1.35 : 1})`;
+      }
+      if (glowRef.current) {
+        glowRef.current.style.transform = `translate3d(${pointer.x - 56}px, ${pointer.y - 56}px, 0)`;
+        glowRef.current.style.opacity = mode === "project" ? "0.42" : mode === "interactive" ? "0.32" : "0.2";
+      }
+      particleRefs.current.forEach((particle, index) => {
+        const position = trailRef.current[index];
+        if (particle && position) {
+          particle.style.transform = `translate3d(${position.x - 2}px, ${position.y - 2}px, 0)`;
+          const movementBoost = Math.min(speedRef.current / 24, 1);
+          particle.style.opacity = reducedMotion
+            ? "0"
+            : `${0.22 + movementBoost * 0.3 - index * 0.024}`;
+        }
+      });
+
+      frameRef.current = requestAnimationFrame(animate);
     };
 
-    window.addEventListener("resize", updatePointerMode, { passive: true });
-    window.addEventListener("orientationchange", updatePointerMode, { passive: true });
-
-    rafRef.current = requestAnimationFrame(animate);
+    frameRef.current = requestAnimationFrame(animate);
 
     return () => {
+      cancelAnimationFrame(frameRef.current);
+      mediaQueries.forEach((query) =>
+        query.removeEventListener("change", updatePointerMode)
+      );
+      window.removeEventListener("resize", updatePointerMode);
       window.removeEventListener("mousemove", handleMove);
       window.removeEventListener("mousedown", handleDown);
       window.removeEventListener("mouseup", handleUp);
-      window.removeEventListener("mouseover", handleOver);
-      window.removeEventListener("resize", updatePointerMode);
-      window.removeEventListener("orientationchange", updatePointerMode);
-      cancelAnimationFrame(rafRef.current);
     };
-  }, [isHovering, isClicking]);
+  }, []);
 
-  if (isTouch || !isFinePointer) return null;
+  useEffect(() => {
+    if (!enabled) {
+      document.documentElement.classList.remove("custom-cursor-enabled");
+      return;
+    }
+
+    document.documentElement.classList.add("custom-cursor-enabled");
+
+    return () => {
+      document.documentElement.classList.remove("custom-cursor-enabled");
+    };
+  }, [enabled]);
+
+  if (!enabled) return null;
+
+  const isProject = hoverMode === "project";
 
   return (
     <>
-      {/* Cursor dot */}
-      <div
-        ref={dotRef}
-        className="fixed top-0 left-0 w-2 h-2 rounded-full pointer-events-none z-[9999]"
-        style={{
-          backgroundColor: isHovering ? "#00ff88" : "#00d4ff",
-          boxShadow: `0 0 8px ${isHovering ? "#00ff88" : "#00d4ff"}80`,
-          willChange: "transform",
-          transition: "background-color 0.2s, box-shadow 0.2s",
-        }}
-      />
-
-      {/* Cursor ring */}
-      <div
-        ref={ringRef}
-        className="fixed top-0 left-0 w-10 h-10 rounded-full pointer-events-none z-[9998]"
-        style={{
-          border: `1px solid ${isHovering ? "rgba(0,255,136,0.4)" : "rgba(0,212,255,0.3)"}`,
-          willChange: "transform",
-          transition: "border-color 0.3s",
-        }}
-      />
-
-      {/* Cursor glow */}
       <div
         ref={glowRef}
-        className="fixed top-0 left-0 w-[120px] h-[120px] rounded-full pointer-events-none z-[3]"
+        aria-hidden="true"
+        className="cursor-breathe pointer-events-none fixed left-0 top-0 z-[9995] h-28 w-28 rounded-full opacity-0 transition-opacity duration-200"
         style={{
-          background: `radial-gradient(circle, ${isHovering ? "rgba(0,255,136,0.12)" : "rgba(0,212,255,0.06)"} 0%, transparent 70%)`,
+          background:
+            "radial-gradient(circle, rgba(229,193,126,0.45) 0%, rgba(214,173,104,0.2) 32%, rgba(214,173,104,0.06) 52%, transparent 74%)",
+          filter: "blur(4px)",
+          animation: "cursor-breathe 2.8s ease-in-out infinite",
           willChange: "transform, opacity",
         }}
       />
-
-      {/* Trail particles container */}
+      {Array.from({ length: 7 }, (_, index) => (
+        <span
+          key={index}
+          ref={(element) => {
+            particleRefs.current[index] = element;
+          }}
+          aria-hidden="true"
+          className="pointer-events-none fixed left-0 top-0 z-[9996] h-1 w-1 rounded-full bg-[#E8CEA0] opacity-0"
+          style={{
+            width: `${Math.max(2, 4 - index * 0.35)}px`,
+            height: `${Math.max(2, 4 - index * 0.35)}px`,
+            boxShadow: "0 0 10px rgba(229,193,126,0.75), 0 0 18px rgba(214,173,104,0.3)",
+            willChange: "transform, opacity",
+          }}
+        />
+      ))}
       <div
-        ref={particlesContainerRef}
-        className="fixed inset-0 pointer-events-none z-[9997] overflow-hidden"
+        ref={secondaryRingRef}
+        aria-hidden="true"
+        className="pointer-events-none fixed left-0 top-0 z-[9997] h-[54px] w-[54px] rounded-full border border-[#D6B477]/25"
+        style={{
+          boxShadow: "0 0 18px rgba(229,193,126,0.16), inset 0 0 12px rgba(214,173,104,0.08)",
+          willChange: "transform",
+        }}
       />
-
-      {/* Click burst effect */}
+      <div
+        ref={ringRef}
+        aria-hidden="true"
+        className="pointer-events-none fixed left-0 top-0 z-[9998] flex h-10 w-10 items-center justify-center rounded-full border border-[#D6B477]/60 text-[8px] font-mono tracking-[0.12em] text-[#E8CEA0] transition-[border-color,box-shadow] duration-200"
+        style={{
+          borderColor: isProject
+            ? "rgba(244,224,170,0.98)"
+            : "rgba(229,193,126,0.72)",
+          boxShadow: isProject
+            ? "0 0 28px rgba(229,193,126,0.55), 0 0 8px rgba(229,193,126,0.8)"
+            : "0 0 16px rgba(229,193,126,0.3), 0 0 4px rgba(229,193,126,0.55)",
+          willChange: "transform",
+        }}
+      >
+        {isProject && <span>VIEW</span>}
+      </div>
+      <div
+        ref={dotRef}
+        aria-hidden="true"
+        className="pointer-events-none fixed left-0 top-0 z-[9999] h-1.5 w-1.5 rounded-full bg-[#E8CEA0]"
+        style={{
+          boxShadow: "0 0 12px rgba(229,193,126,1), 0 0 24px rgba(214,173,104,0.55)",
+          willChange: "transform",
+        }}
+      />
       <AnimatePresence>
-        {isClicking && (
-          <motion.div
-            className="fixed top-0 left-0 pointer-events-none z-[9996]"
+        {clickPoint && !reducedMotionRef.current && (
+          <div
+            key={clickId}
+            aria-hidden="true"
+            className="pointer-events-none fixed z-[10000] h-8 w-8"
             style={{
-              transform: `translate(${cursorPos.x - 25}px, ${cursorPos.y - 25}px)`,
+              left: clickPoint.x - 16,
+              top: clickPoint.y - 16,
             }}
-            initial={{ scale: 0.5, opacity: 1 }}
-            animate={{ scale: 1.5, opacity: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
           >
-            <div className="w-[50px] h-[50px] rounded-full border border-neon-blue/40" />
-          </motion.div>
+            <motion.div
+              className="h-full w-full rounded-full border border-[#E8CEA0]/80"
+              initial={{ scale: 0.5, opacity: 0.95 }}
+              animate={{ scale: 2, opacity: 0 }}
+              transition={{ duration: 0.34, ease: "easeOut" }}
+              onAnimationComplete={() => setClickPoint(null)}
+            />
+          </div>
         )}
       </AnimatePresence>
-
-      {/* Corner crosshairs near cursor */}
-      <Crosshairs pos={cursorPos} isHovering={isHovering} />
     </>
-  );
-}
-
-function Crosshairs({
-  pos,
-  isHovering,
-}: {
-  pos: { x: number; y: number };
-  isHovering: boolean;
-}) {
-  const offset = isHovering ? 18 : 14;
-  const length = isHovering ? 8 : 5;
-  const opacity = isHovering ? 0.5 : 0.2;
-
-  return (
-    <div
-      className="fixed top-0 left-0 pointer-events-none z-[9995]"
-      style={{
-        transform: `translate(${pos.x}px, ${pos.y}px)`,
-      }}
-    >
-      {/* Top */}
-      <div
-        className="absolute bg-neon-blue"
-        style={{
-          width: "1px",
-          height: `${length}px`,
-          top: `-${offset}px`,
-          left: "0px",
-          opacity,
-        }}
-      />
-      {/* Bottom */}
-      <div
-        className="absolute bg-neon-blue"
-        style={{
-          width: "1px",
-          height: `${length}px`,
-          top: `${offset - length + 1}px`,
-          left: "0px",
-          opacity,
-        }}
-      />
-      {/* Left */}
-      <div
-        className="absolute bg-neon-blue"
-        style={{
-          width: `${length}px`,
-          height: "1px",
-          top: "0px",
-          left: `-${offset}px`,
-          opacity,
-        }}
-      />
-      {/* Right */}
-      <div
-        className="absolute bg-neon-blue"
-        style={{
-          width: `${length}px`,
-          height: "1px",
-          top: "0px",
-          left: `${offset - length + 1}px`,
-          opacity,
-        }}
-      />
-    </div>
   );
 }

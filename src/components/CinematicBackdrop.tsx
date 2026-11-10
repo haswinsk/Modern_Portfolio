@@ -51,7 +51,7 @@ export default function CinematicBackdrop({
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     const material = new THREE.PointsMaterial({
-      color: 0x00d4ff,
+      color: 0xd6b477,
       size: isMobile ? 0.035 : 0.07,
       transparent: true,
       opacity: 0.55,
@@ -62,7 +62,7 @@ export default function CinematicBackdrop({
 
     const gridGeometry = new THREE.TorusGeometry(9.5, 0.02, 8, 120);
     const gridMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00d4ff,
+      color: 0xd6b477,
       transparent: true,
       opacity: 0.08,
     });
@@ -70,16 +70,13 @@ export default function CinematicBackdrop({
     gridRing.rotation.x = Math.PI / 2;
     scene.add(gridRing);
 
-    // Lightweight drone representation: use low-poly octahedrons on desktop,
-    // but switch to tiny sprite-based 'mini-drones' on mobile for smoothness.
-    let createdTexture: THREE.Texture | null = null;
     // drones removed: no drone creation on purpose to improve mobile performance
 
-    const primaryLight = new THREE.PointLight(0x00d4ff, isMobile ? 1.0 : 1.8, 55);
+    const primaryLight = new THREE.PointLight(0xd6b477, isMobile ? 1.0 : 1.8, 55);
     primaryLight.position.set(-5, 4, 12);
     scene.add(primaryLight);
 
-    const secondaryLight = new THREE.PointLight(0xa855f7, isMobile ? 0.7 : 1.2, 45);
+    const secondaryLight = new THREE.PointLight(0xe8cea0, isMobile ? 0.7 : 1.2, 45);
     secondaryLight.position.set(6, -3, 10);
     scene.add(secondaryLight);
 
@@ -124,14 +121,8 @@ export default function CinematicBackdrop({
 
     animate();
 
-    const handleVisibility = () => {
-      /* noop: animate() checks document.hidden and skips rendering when hidden */
-    };
-    document.addEventListener("visibilitychange", handleVisibility);
-
     return () => {
       window.removeEventListener("resize", resize);
-      document.removeEventListener("visibilitychange", handleVisibility);
       window.cancelAnimationFrame(rafId);
       geometry.dispose();
       material.dispose();
@@ -149,7 +140,7 @@ export default function CinematicBackdrop({
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(circle at 50% 18%, rgba(0,212,255,0.14), transparent 40%), radial-gradient(circle at 20% 30%, rgba(168,85,247,0.10), transparent 28%), radial-gradient(circle at 80% 26%, rgba(0,240,255,0.08), transparent 30%)",
+              "radial-gradient(circle at 50% 18%, rgba(214,180,119,0.12), transparent 40%), radial-gradient(circle at 20% 30%, rgba(185,154,98,0.08), transparent 28%), radial-gradient(circle at 80% 26%, rgba(242,214,154,0.06), transparent 30%)",
           }}
         />
         <motion.div
@@ -160,7 +151,7 @@ export default function CinematicBackdrop({
         />
         <motion.div
           className="absolute -top-24 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full blur-3xl"
-          style={{ background: "rgba(0,212,255,0.08)" }}
+          style={{ background: "rgba(214,180,119,0.07)" }}
           animate={reducedMotion ? { opacity: 0.2 } : { opacity: [0.24, 0.45, 0.24], scale: [1, 1.08, 1] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -170,7 +161,7 @@ export default function CinematicBackdrop({
         className="fixed inset-0 z-[2] pointer-events-none opacity-40"
         style={{
           background:
-            "repeating-linear-gradient(90deg, transparent, transparent 18px, rgba(0,212,255,0.02) 18px, rgba(0,212,255,0.02) 19px)",
+            "repeating-linear-gradient(90deg, transparent, transparent 32px, rgba(214,180,119,0.014) 32px, rgba(214,180,119,0.014) 33px)",
         }}
         animate={reducedMotion ? { opacity: 0.08 } : { opacity: [0.18, 0.3, 0.18] }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}

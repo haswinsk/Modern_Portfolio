@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { send as emailjsSend, init as emailjsInit } from "@emailjs/browser";
 import { motion, useInView } from "framer-motion";
-import { Mail, Globe, Code, Camera, Send, Copy, Check } from "lucide-react";
+import { Mail, Globe, Code, Send, Copy, Check } from "lucide-react";
 import { siteConfig } from "../data/site";
 
 const contactLinks = [
@@ -10,21 +10,21 @@ const contactLinks = [
     value: siteConfig.email,
     icon: Mail,
     href: `mailto:${siteConfig.email}`,
-    color: "#00d4ff",
+    color: "#d6b477",
   },
   {
     label: "LinkedIn",
     value: "haswinsk",
     icon: Globe,
     href: siteConfig.linkedin,
-    color: "#3b82f6",
+    color: "#c5a66f",
   },
   {
     label: "GitHub",
     value: "haswinsk",
     icon: Code,
     href: siteConfig.github,
-    color: "#a855f7",
+    color: "#b99a62",
   },
   // Instagram removed per user request
 ];
@@ -126,8 +126,6 @@ export default function ContactSection() {
       id="contact"
       className="relative py-20 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden"
     >
-      <div className="absolute inset-0 bg-radial-glow opacity-40" />
-
       <div ref={ref} className="relative z-10 max-w-6xl mx-auto">
         {/* Section header */}
         <motion.div
@@ -139,9 +137,10 @@ export default function ContactSection() {
           <span className="text-xs font-mono text-neon-blue/60 tracking-[0.3em] mb-3 block">
             [ COMMAND_CENTER ]
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-            Get In <span className="text-gradient">Touch</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-semibold text-[#F5F1E8] mb-4">
+            Get In <span className="text-[#D6B477]">Touch</span>
           </h2>
+          <div className="mx-auto mb-5 h-px w-20 bg-gradient-to-r from-transparent via-[#D6B477] to-transparent" />
           <p className="text-sm md:text-base text-white/40 max-w-xl mx-auto">
             If you want to talk AI ideas, future-facing products, or creative web builds, this is the channel.
           </p>
@@ -157,9 +156,9 @@ export default function ContactSection() {
           >
             {/* Terminal header */}
             <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-red-400/60" />
-              <div className="w-3 h-3 rounded-full bg-yellow-400/60" />
-              <div className="w-3 h-3 rounded-full bg-green-400/60" />
+              <div className="w-3 h-3 rounded-full bg-[#A6A198]/60" />
+              <div className="w-3 h-3 rounded-full bg-[#D6B477]/60" />
+              <div className="w-3 h-3 rounded-full bg-[#D6B477]/60" />
               <span className="ml-3 text-[10px] font-mono text-white/30">
                 contact_terminal — bash
               </span>
@@ -178,7 +177,7 @@ export default function ContactSection() {
                     animate={{ opacity: 1, x: 0 }}
                     className={`${
                       line.includes("successfully")
-                        ? "text-green-400/70"
+                        ? "text-[#D6B477]/70"
                         : line.includes("Transmitting")
                         ? "text-neon-blue/70"
                         : "text-white/40"

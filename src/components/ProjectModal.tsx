@@ -99,7 +99,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                     exit={{ opacity: 0 }}
                   >
                     <div className="absolute inset-0 bg-grid-pattern opacity-20" />
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,212,255,0.14),transparent_40%)]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(214,180,119,0.14),transparent_40%)]" />
                     <div className="relative z-10 h-full min-h-[56vh] flex flex-col justify-center items-center text-center px-6">
                       <div className="text-[10px] font-mono tracking-[0.42em] text-neon-blue/60 mb-3">CLASSIFIED DOSSIER</div>
                       <h3 className="text-2xl md:text-4xl font-bold text-white mb-3">Booting secure project archive</h3>
@@ -136,7 +136,7 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                     {project.status}
                   </span>
                   {isResearchProject && (
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-cyan-400/20 bg-cyan-400/10 text-cyan-200/80 tracking-[0.18em]">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-[#D6B477]/20 bg-[#D6B477]/10 text-[#E8CEA0]/80 tracking-[0.18em]">
                       PRIVATE
                     </span>
                   )}
@@ -211,16 +211,16 @@ export default function ProjectModal({ project, onClose }: ProjectModalProps) {
                   <Cpu size={12} />
                   ARCHITECTURE
                 </h3>
-                <div className={`p-4 rounded-xl font-mono text-[10px] md:text-xs space-y-1 ${isResearchProject ? "bg-cyan-500/5 border border-cyan-400/10 text-cyan-100/35" : "bg-black/40 border border-white/5 text-white/30"}`}>
+                <div className={`p-4 rounded-xl font-mono text-[10px] md:text-xs space-y-1 ${isResearchProject ? "bg-[#D6B477]/5 border border-[#D6B477]/10 text-[#E8CEA0]/35" : "bg-black/40 border border-white/5 text-white/30"}`}>
                   {getArchitectureLines(project).map((line, index) => (
                     <div
                       key={line}
-                      className={index === 0 ? (isResearchProject ? "text-cyan-300/70" : "text-green-400/60") : ""}
+                      className={index === 0 ? (isResearchProject ? "text-[#E8CEA0]/70" : "text-[#D6B477]/60") : ""}
                     >
                       {line}
                     </div>
                   ))}
-                  <div className={isResearchProject ? "text-cyan-300/35 mt-2" : "text-neon-blue/40 mt-2"}>$ _</div>
+                  <div className={isResearchProject ? "text-[#E8CEA0]/35 mt-2" : "text-neon-blue/40 mt-2"}>$ _</div>
                 </div>
               </motion.div>
 

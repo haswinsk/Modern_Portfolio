@@ -1,195 +1,153 @@
 import { motion, useInView } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
-import { Activity, Cpu, Globe, Zap } from "lucide-react";
-
-function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (!isInView) return;
-    let start = 0;
-    const duration = 2000;
-    const increment = target / (duration / 16);
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
-    }, 16);
-    return () => clearInterval(timer);
-  }, [isInView, target]);
-
-  return (
-    <span ref={ref}>
-      {count}
-      {suffix}
-    </span>
-  );
-}
+import { useRef } from "react";
+import {
+  BookOpen,
+  Code2,
+  Database,
+  Layers3,
+  Sparkles,
+} from "lucide-react";
+import { skills } from "../data/skills";
 
 const metrics = [
+  { label: "Projects Built", value: "15+", icon: Layers3 },
+  { label: "Technologies Used", value: `${skills.length}`, icon: Code2 },
+  { label: "GitHub Contributions", value: "Not tracked", icon: Code2 },
+  { label: "Hackathons Participated", value: "Not tracked", icon: Sparkles },
+];
+
+const proficiencyGroups = [
   {
-    label: "System Uptime",
-    value: 99,
-    suffix: "%",
-    icon: Activity,
-    color: "#22c55e",
+    label: "Frontend Development",
+    category: "Frontend",
+    icon: Code2,
   },
   {
-    label: "Code Efficiency",
-    value: 95,
-    suffix: "%",
-    icon: Cpu,
-    color: "#00d4ff",
+    label: "Backend Development",
+    category: "Backend",
+    icon: Layers3,
   },
   {
-    label: "Global Reach",
-    value: 12,
-    suffix: "+",
-    icon: Globe,
-    color: "#a855f7",
+    label: "Database Management",
+    category: "Database",
+    icon: Database,
   },
   {
-    label: "Innovation Index",
-    value: 98,
-    suffix: "%",
-    icon: Zap,
-    color: "#f59e0b",
+    label: "AI Integration",
+    category: "Architecture",
+    skill: "AI Integration",
+    icon: Sparkles,
+  },
+  {
+    label: "UI/UX Development",
+    category: "Design",
+    skill: "UI/UX",
+    icon: BookOpen,
   },
 ];
+
+function getGroupLevel(group: (typeof proficiencyGroups)[number]) {
+  const matches = group.skill
+    ? skills.filter((skill) => skill.name === group.skill)
+    : skills.filter((skill) => skill.category === group.category);
+
+  if (!matches.length) return null;
+  return Math.round(matches.reduce((total, skill) => total + skill.level, 0) / matches.length);
+}
 
 export default function MissionControl() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="relative py-16 md:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      <div className="absolute inset-0 bg-radial-glow opacity-30" />
-
-      <div ref={ref} className="relative z-10 max-w-6xl mx-auto">
+    <section
+      id="mission"
+      className="relative overflow-hidden px-4 py-14 sm:px-6 md:py-20 lg:px-8 lg:py-24"
+    >
+      <div ref={ref} className="relative z-10 mx-auto max-w-7xl">
         <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 30 }}
+          className="mb-9 text-center md:mb-12"
+          initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <span className="text-xs font-mono text-neon-blue/60 tracking-[0.3em] mb-3 block">
+          <span className="mb-3 block font-mono text-[10px] tracking-[0.3em] text-[#D6B477]/75">
             [ MISSION_CONTROL ]
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-            System <span className="text-gradient">Dashboard</span>
+          <h2 className="mb-4 text-4xl font-semibold tracking-[-0.03em] text-[#F5F1E8] sm:text-5xl md:text-6xl">
+            Technical <span className="text-[#D6B477]">Overview</span>
           </h2>
-          <p className="text-sm md:text-base text-white/40 max-w-xl mx-auto">
-            Live indicators showing technical strengths, AI competence, and product-minded delivery — concise and recruiter-friendly.
+          <div className="mx-auto mb-5 h-px w-20 bg-gradient-to-r from-transparent via-[#D6B477] to-transparent" />
+          <p className="mx-auto max-w-2xl text-sm leading-7 text-[#AAA49A] md:text-base">
+            A snapshot of my technical capabilities, development experience and
+            areas of focus.
           </p>
         </motion.div>
 
-        {/* Metrics Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {metrics.map((metric, i) => (
+        <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+          {metrics.map((metric, index) => (
             <motion.div
               key={metric.label}
-              className="glass-panel rounded-xl p-5 md:p-6 relative overflow-hidden group"
-              initial={{ opacity: 0, y: 30 }}
+              className="group rounded-xl border border-[#D6B477]/20 bg-[#201F1C]/75 p-4 transition-colors hover:border-[#D6B477]/50 sm:p-5"
+              initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.2 + i * 0.1 }}
-              whileHover={{ scale: 1.03 }}
+              transition={{ delay: 0.15 + index * 0.08 }}
+              whileHover={{ y: -3 }}
             >
-              {/* Background pulse */}
-              <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity"
-                style={{ backgroundColor: metric.color }}
-              />
-
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-3">
-                  <metric.icon
-                    size={20}
-                    style={{ color: metric.color }}
-                    className="opacity-80"
-                  />
-                  <motion.div
-                    className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: metric.color }}
-                    animate={{ opacity: [0.4, 1, 0.4] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
-                </div>
-                <div
-                  className="text-2xl md:text-3xl font-bold mb-1"
-                  style={{ color: metric.color }}
-                >
-                  <AnimatedCounter target={metric.value} suffix={metric.suffix} />
-                </div>
-                <div className="text-[10px] md:text-xs font-mono text-white/40 tracking-wider">
-                  {metric.label}
-                </div>
+              <metric.icon className="mb-5 text-[#D6B477] transition-colors group-hover:text-[#E8CEA0]" size={21} />
+              <div className="mb-1 text-xl font-semibold text-[#F5F1E8] sm:text-2xl">
+                {metric.value}
+              </div>
+              <div className="font-mono text-[9px] tracking-[0.12em] text-[#AAA49A] sm:text-[10px]">
+                {metric.label}
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Radar / Activity visualization */}
         <motion.div
-          className="glass-panel rounded-xl p-6 md:p-8"
-          initial={{ opacity: 0, y: 30 }}
+          className="rounded-xl border border-[#D6B477]/20 bg-[#201F1C]/60 p-5 sm:p-7"
+          initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: 0.55 }}
         >
-          <div className="flex items-center justify-between mb-6">
-            <span className="text-xs font-mono text-neon-blue/60 tracking-wider">
-              NEURAL_ACTIVITY_MONITOR
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-[10px] font-mono text-white/40">LIVE</span>
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <div>
+              <span className="font-mono text-[10px] tracking-[0.2em] text-[#D6B477]">
+                TECHNICAL_PROFICIENCY
+              </span>
+              <p className="mt-2 text-sm text-[#AAA49A]">
+                Skill levels based on the current portfolio skill data.
+              </p>
             </div>
+            <span className="hidden rounded-full border border-[#D6B477]/20 px-3 py-1 font-mono text-[9px] tracking-[0.14em] text-[#AAA49A] sm:block">
+              PORTFOLIO DATA
+            </span>
           </div>
 
-          {/* Simulated activity bars */}
-          <div className="space-y-3">
-            {["Frontend Development", "Backend Architecture", "UI/UX Design", "AI Integration", "System Optimization"].map(
-              (activity, i) => (
-                <div key={activity} className="flex items-center gap-4">
-                  <span className="text-xs font-mono text-white/50 w-32 md:w-40 shrink-0">
-                    {activity}
-                  </span>
-                  <div className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
+          <div className="grid gap-x-8 gap-y-5 md:grid-cols-2">
+            {proficiencyGroups.map((group, index) => {
+              const level = getGroupLevel(group);
+              return (
+                <div key={group.label}>
+                  <div className="mb-2 flex items-center gap-2">
+                    <group.icon size={16} className="text-[#D6B477]" />
+                    <span className="text-sm text-[#F5F1E8]/85">{group.label}</span>
+                    <span className="ml-auto font-mono text-[10px] text-[#E8CEA0]">
+                      {level === null ? "Not rated" : `${level}%`}
+                    </span>
+                  </div>
+                  <div className="h-1.5 overflow-hidden rounded-full bg-[#11100F]">
                     <motion.div
-                      className="h-full rounded-full"
-                      style={{
-                        background: `linear-gradient(90deg, #00d4ff, #a855f7)`,
-                      }}
+                      className="h-full rounded-full bg-gradient-to-r from-[#D6B477] to-[#E8CEA0]"
                       initial={{ width: 0 }}
-                      animate={
-                        isInView
-                          ? { width: `${75 + Math.random() * 20}%` }
-                          : {}
-                      }
-                      transition={{ delay: 0.8 + i * 0.15, duration: 1.2 }}
+                      animate={isInView ? { width: `${level ?? 0}%` } : {}}
+                      transition={{ delay: 0.7 + index * 0.1, duration: 0.8 }}
                     />
                   </div>
-                  <span className="text-[10px] font-mono text-white/30 w-8 text-right">
-                    {75 + Math.floor(Math.random() * 20)}%
-                  </span>
                 </div>
-              )
-            )}
-          </div>
-
-          {/* Bottom status line */}
-          <div className="mt-6 pt-4 border-t border-white/5 flex flex-wrap items-center justify-between gap-2">
-            <span className="text-[10px] font-mono text-white/30">
-              LAST_SYNC: {new Date().toLocaleTimeString()}
-            </span>
-            <span className="text-[10px] font-mono text-neon-blue/40">
-              ALL_SYSTEMS_NOMINAL
-            </span>
+              );
+            })}
           </div>
         </motion.div>
       </div>

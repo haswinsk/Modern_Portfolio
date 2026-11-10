@@ -1,413 +1,231 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Rocket, Terminal, Mail, Download, ChevronDown } from "lucide-react";
-import GlitchText from "./GlitchText";
+import {
+  ArrowDown,
+  Code,
+  Download,
+  Globe,
+  Mail,
+  Rocket,
+  SquarePlay,
+} from "lucide-react";
+import { siteConfig } from "../data/site";
 
-const subtitles = [
-  "Building immersive AI experiences",
-  "Creating futuristic interfaces",
-  "Exploring AI-powered ideas",
-  "Developing intelligent modern applications",
+const taglines = [
+  "Exploring AI-powered ideas...",
+  "Building products that matter...",
+  "Turning ideas into reality...",
 ];
 
 export default function HeroSection() {
-  const [subtitleIndex, setSubtitleIndex] = useState(0);
+  const [taglineIndex, setTaglineIndex] = useState(0);
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isScanning, setIsScanning] = useState(false);
-  const subtitleRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const current = subtitles[subtitleIndex];
-    const speed = isDeleting ? 40 : 80;
-
+    const current = taglines[taglineIndex];
+    const delay = isDeleting ? 45 : 75;
     const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        if (displayText.length < current.length) {
-          setDisplayText(current.slice(0, displayText.length + 1));
-        } else {
-          setTimeout(() => setIsDeleting(true), 2000);
-        }
+      if (!isDeleting && displayText.length < current.length) {
+        setDisplayText(current.slice(0, displayText.length + 1));
+      } else if (!isDeleting) {
+        setTimeout(() => setIsDeleting(true), 1800);
+      } else if (displayText.length > 0) {
+        setDisplayText(displayText.slice(0, -1));
       } else {
-        if (displayText.length > 0) {
-          setDisplayText(displayText.slice(0, -1));
-        } else {
-          setIsDeleting(false);
-          setSubtitleIndex((prev) => (prev + 1) % subtitles.length);
-        }
+        setIsDeleting(false);
+        setTaglineIndex((index) => (index + 1) % taglines.length);
       }
-    }, speed);
+    }, delay);
 
     return () => clearTimeout(timeout);
-  }, [displayText, isDeleting, subtitleIndex]);
+  }, [displayText, isDeleting, taglineIndex]);
 
   const scrollTo = (id: string) => {
-    const el = document.querySelector(id);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
+      className="relative min-h-screen overflow-hidden bg-[#11100F] px-5 pb-8 pt-28 sm:px-8 lg:px-12"
     >
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-radial-glow" />
-      <div className="absolute inset-0 bg-grid-pattern opacity-20" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_72%_38%,rgba(214,180,119,0.12),transparent_30%),linear-gradient(180deg,rgba(17,16,15,0.2),#11100F_90%)]" />
 
-      {/* Floating holographic symbols */}
-      <motion.div
-        className="absolute top-20 left-10 text-neon-blue/10 text-6xl font-mono select-none hidden lg:block"
-        animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-      >
-        {"{ }"}
-      </motion.div>
-      <motion.div
-        className="absolute bottom-32 right-16 text-purple-accent/10 text-5xl font-mono select-none hidden lg:block"
-        animate={{ y: [0, 15, 0], rotate: [0, -5, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-      >
-        {"</>"}
-      </motion.div>
-      <motion.div
-        className="absolute top-1/3 right-1/4 text-cyan-glow/10 text-4xl font-mono select-none hidden lg:block"
-        animate={{ y: [0, -15, 0] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-      >
-        {"#"}
-      </motion.div>
-
-      <div className="relative z-10 max-w-7xl mx-auto w-full">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          {/* Left content */}
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-7rem)] max-w-7xl items-center">
+        <div className="grid w-full items-center gap-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 xl:gap-24">
           <motion.div
-            className="text-center lg:text-left order-2 lg:order-1"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            className="contents lg:block lg:text-left"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            {/* Status badge */}
-            <motion.div
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass-panel mb-6"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-xs font-mono text-cyan-glow/70 tracking-wider">
-                SYSTEM ONLINE — PRODUCTION READY
-              </span>
-            </motion.div>
-
-            {/* Main title */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-4">
-              <GlitchText text="HASWIN" className="text-white" />
-              <span className="text-gradient mx-4">SK</span>
-            </h1>
-
-            {/* Roles */}
-            <div className="flex flex-wrap justify-center lg:justify-start gap-2 mb-4">
-              {["Full Stack Developer", "AI Explorer", "Product Engineer"].map(
-                (role, i) => (
-                  <motion.span
-                    key={role}
-                    className="px-3 py-1 text-xs sm:text-sm font-mono text-neon-blue/80 border border-neon-blue/20 rounded-md bg-neon-blue/5"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 + i * 0.1 }}
-                  >
-                    {role}
-                  </motion.span>
-                )
-              )}
+            <div className="order-1 mb-7 justify-self-center inline-flex items-center gap-2 rounded-full border border-[#D6B477]/40 bg-[#191919]/70 px-4 py-2 text-[10px] font-medium tracking-[0.2em] text-[#E8CEA0] lg:justify-self-auto">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#D6B477]" />
+              SYSTEM ONLINE — PRODUCTION READY
             </div>
 
-            {/* Typewriter subtitle (5s-first-impression) */}
-            <div className="h-8 mb-8">
-              <span
-                ref={subtitleRef}
-                className="text-sm sm:text-base md:text-lg text-white/60 font-mono"
-              >
+            <div className="order-3 text-center lg:order-none lg:text-left">
+              <h1 className="mb-7 text-5xl font-semibold leading-[0.92] tracking-[-0.045em] text-[#F5F1E8] sm:text-6xl md:text-7xl lg:text-[5.5rem]">
+                HASWIN{" "}
+                <span className="text-[#D6B477]">SK</span>
+              </h1>
+
+              <div className="mb-7 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm font-medium text-[#A6A198] lg:justify-start">
+                <span>Full Stack Developer</span>
+                <span className="hidden text-[#D6B477] sm:inline">|</span>
+                <span>AI Explorer</span>
+                <span className="hidden text-[#D6B477] sm:inline">|</span>
+                <span>Product Engineer</span>
+              </div>
+
+              <p className="mx-auto mb-8 max-w-xl text-base leading-8 text-[#A6A198] sm:text-lg lg:mx-0">
+                Building scalable web applications, intelligent AI systems, and
+                real-world products that create impact.
+              </p>
+
+              <div className="mb-10 h-7 font-mono text-sm text-[#E8CEA0]">
                 {displayText}
-                <span className="inline-block w-0.5 h-5 bg-neon-blue ml-0.5 animate-blink align-middle" />
-              </span>
-            </div>
+                <span className="ml-1 inline-block h-4 w-px animate-blink bg-[#D6B477] align-middle" />
+              </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap justify-center lg:justify-start gap-3">
-              <motion.button
-                onClick={() => scrollTo("#projects")}
-                className="group flex items-center gap-2 px-5 py-2.5 bg-neon-blue/10 border border-neon-blue/40 rounded-lg text-neon-blue text-sm font-medium hover:bg-neon-blue/20 transition-all neon-border"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <div className="flex flex-wrap justify-center gap-3 lg:justify-start">
+                <motion.button
+                  onClick={() => scrollTo("#projects")}
+                  className="inline-flex items-center gap-2 rounded-md bg-[#D6B477] px-5 py-3 text-sm font-semibold text-[#11100F] transition-colors hover:bg-[#E8CEA0]"
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Rocket size={16} />
+                  Launch Projects
+                </motion.button>
+                <motion.a
+                  href={siteConfig.resumeUrl}
+                  download
+                  className="inline-flex items-center gap-2 rounded-md border border-[#D6B477]/40 bg-[#191919] px-5 py-3 text-sm font-medium text-[#F5F1E8] transition-colors hover:border-[#D6B477] hover:text-[#E8CEA0]"
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Download size={16} />
+                  View Resume
+                </motion.a>
+                <motion.button
+                  onClick={() => scrollTo("#contact")}
+                  className="inline-flex items-center gap-2 rounded-md border border-[#D6B477]/40 bg-transparent px-5 py-3 text-sm font-medium text-[#F5F1E8] transition-colors hover:bg-[#D6B477]/10 hover:text-[#E8CEA0]"
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Mail size={16} />
+                  Contact Me
+                </motion.button>
+              </div>
+
+              <div className="mt-9 flex justify-center gap-3 lg:justify-start">
+              <a
+                href={siteConfig.github}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="GitHub"
+                className="rounded-md border border-[#D6B477]/20 bg-[#191919] p-2.5 text-[#A6A198] transition-colors hover:border-[#D6B477]/60 hover:text-[#E8CEA0]"
               >
-                <Rocket size={16} />
-                Launch Projects
-              </motion.button>
-              <motion.button
-                onClick={() => scrollTo("#arsenal")}
-                className="group flex items-center gap-2 px-5 py-2.5 bg-purple-accent/10 border border-purple-accent/40 rounded-lg text-purple-accent text-sm font-medium hover:bg-purple-accent/20 transition-all"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                <Code size={17} />
+              </a>
+              <a
+                href={siteConfig.linkedin}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="LinkedIn"
+                className="rounded-md border border-[#D6B477]/20 bg-[#191919] p-2.5 text-[#A6A198] transition-colors hover:border-[#D6B477]/60 hover:text-[#E8CEA0]"
               >
-                <Terminal size={16} />
-                Mission Control
-              </motion.button>
-              <motion.button
-                onClick={() => scrollTo("#contact")}
-                className="group flex items-center gap-2 px-5 py-2.5 glass-panel rounded-lg text-white/80 text-sm font-medium hover:text-white transition-all"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                <Globe size={17} />
+              </a>
+              <span
+                aria-label="X link unavailable"
+                title="X link not configured"
+                className="cursor-not-allowed rounded-md border border-[#D6B477]/10 bg-[#191919]/70 p-2.5 text-[#A6A198]/45"
               >
-                <Mail size={16} />
-                Contact Me
-              </motion.button>
-              <motion.a
-                href="/HaswinSK-resume.pdf"
-                download
-                className="group flex items-center gap-2 px-5 py-2.5 glass-panel rounded-lg text-white/80 text-sm font-medium hover:text-white transition-all"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                <span className="text-sm font-semibold leading-[17px]">X</span>
+              </span>
+              <span
+                aria-label="YouTube link unavailable"
+                title="YouTube link not configured"
+                className="cursor-not-allowed rounded-md border border-[#D6B477]/10 bg-[#191919]/70 p-2.5 text-[#A6A198]/45"
               >
-                <Download size={16} />
-                Resume
-              </motion.a>
+                <SquarePlay size={17} />
+              </span>
+              </div>
             </div>
           </motion.div>
 
-          {/* Right - Holographic Profile */}
           <motion.div
-            className="relative flex justify-center order-1 lg:order-2"
-            initial={{ opacity: 0, x: 50 }}
+            className="order-2 relative mx-auto h-[275px] w-full max-w-[30rem] lg:order-none lg:h-auto lg:-translate-y-16 lg:self-stretch"
+            initial={{ opacity: 0, x: 28 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.9, delay: 0.15, ease: "easeOut" }}
           >
-            <div
-              className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[420px] lg:h-[420px]"
-              onMouseEnter={() => setIsScanning(true)}
-              onMouseLeave={() => setIsScanning(false)}
-            >
-              {/* Outer rotating HUD ring */}
-              <div className="absolute inset-0 animate-rotate-hud">
-                <svg viewBox="0 0 440 440" className="w-full h-full">
-                  <circle cx="220" cy="220" r="215" fill="none" stroke="rgba(0,212,255,0.15)" strokeWidth="1" strokeDasharray="12 6" />
-                  <circle cx="220" cy="220" r="210" fill="none" stroke="rgba(168,85,247,0.08)" strokeWidth="0.5" />
-                  {/* HUD tick marks */}
-                  {[...Array(36)].map((_, i) => {
-                    const angle = (i * 10 * Math.PI) / 180;
-                    const x1 = 220 + 205 * Math.cos(angle);
-                    const y1 = 220 + 205 * Math.sin(angle);
-                    const x2 = 220 + (i % 3 === 0 ? 195 : 200) * Math.cos(angle);
-                    const y2 = 220 + (i % 3 === 0 ? 195 : 200) * Math.sin(angle);
-                    return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(0,212,255,0.2)" strokeWidth={i % 3 === 0 ? "1.5" : "0.5"} />;
-                  })}
-                  {/* Dot at top */}
-                  <circle cx="220" cy="5" r="3" fill="#00d4ff" opacity="0.6" />
-                </svg>
-              </div>
-
-              {/* Second ring (counter-rotate) */}
-              <motion.div
-                className="absolute inset-3"
-                animate={{ rotate: -360 }}
-                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-              >
-                <svg viewBox="0 0 400 400" className="w-full h-full">
-                  <circle cx="200" cy="200" r="188" fill="none" stroke="rgba(168,85,247,0.1)" strokeWidth="0.5" strokeDasharray="4 8" />
-                  <circle cx="200" cy="12" r="2" fill="#a855f7" opacity="0.5" />
-                </svg>
-              </motion.div>
-
-              {/* Third ring */}
-              <motion.div
-                className="absolute inset-6"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-              >
-                <svg viewBox="0 0 400 400" className="w-full h-full">
-                  <circle cx="200" cy="200" r="180" fill="none" stroke="rgba(0,212,255,0.06)" strokeWidth="0.5" strokeDasharray="2 12" />
-                </svg>
-              </motion.div>
-
-              {/* Inner energy ring */}
-              <div className="absolute inset-8 rounded-full border border-neon-blue/20 animate-energy-ring" />
-
-              {/* Ambient glow behind photo */}
-              <motion.div className="absolute inset-10 rounded-full" animate={{ opacity: isScanning ? 1 : 0.75, scale: isScanning ? 1.03 : 1 }} transition={{ duration: 0.35 }} style={{
-                background: "radial-gradient(circle, rgba(0,212,255,0.15) 0%, rgba(168,85,247,0.08) 40%, transparent 70%)",
-              }} />
-
-              {/* Profile photo container */}
-              <div className="absolute inset-12 rounded-full overflow-hidden border-2 border-neon-blue/30 animate-hologram shadow-[0_0_40px_rgba(0,212,255,0.15)]">
-                {/* Actual profile photo */}
-                <img
-                  src="/images/hero-profile.jpg"
-                  alt="HASWIN SK"
-                  className="absolute inset-0 w-full h-full object-cover object-top scale-110"
-                />
-
-                {/* Holographic color overlay */}
-                <div className="absolute inset-0 bg-gradient-to-b from-neon-blue/10 via-transparent to-purple-accent/15 mix-blend-overlay" />
-
-                {/* Subtle blue tint overlay */}
-                <div className="absolute inset-0" style={{
-                  background: "linear-gradient(180deg, rgba(0,212,255,0.05) 0%, transparent 30%, transparent 70%, rgba(168,85,247,0.1) 100%)",
-                }} />
-
-                {/* Scan line overlay */}
-                <motion.div
-                  className="absolute left-0 right-0 h-[2px]"
-                  style={{ background: "linear-gradient(90deg, transparent, rgba(0,240,255,0.4), transparent)" }}
-                  animate={{ top: ["-2%", "102%"] }}
-                  transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
-                />
-
-                {/* Secondary scan line (slower) */}
-                <motion.div
-                  className="absolute left-0 right-0 h-px"
-                  style={{ background: "linear-gradient(90deg, transparent, rgba(168,85,247,0.25), transparent)" }}
-                  animate={{ top: ["102%", "-2%"] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                />
-
-                <motion.div
-                  className="absolute inset-0 border border-transparent"
-                  animate={{ opacity: isScanning ? [0.2, 0.9, 0.2] : 0.25 }}
-                  transition={{ duration: 2.4, repeat: Infinity }}
-                  style={{
-                    boxShadow: isScanning ? "inset 0 0 30px rgba(0,212,255,0.22)" : "inset 0 0 18px rgba(0,212,255,0.08)",
-                  }}
-                />
-
-                {/* Corner brackets */}
-                <motion.div className="absolute top-3 left-3 w-5 h-5 border-l-2 border-t-2 border-neon-blue/60" animate={{ opacity: isScanning ? 1 : 0.65 }} />
-                <motion.div className="absolute top-3 right-3 w-5 h-5 border-r-2 border-t-2 border-neon-blue/60" animate={{ opacity: isScanning ? 1 : 0.65 }} />
-                <motion.div className="absolute bottom-3 left-3 w-5 h-5 border-l-2 border-b-2 border-neon-blue/60" animate={{ opacity: isScanning ? 1 : 0.65 }} />
-                <motion.div className="absolute bottom-3 right-3 w-5 h-5 border-r-2 border-b-2 border-neon-blue/60" animate={{ opacity: isScanning ? 1 : 0.65 }} />
-
-                {/* AI Targeting crosshair */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 pointer-events-none">
-                  <div className="absolute top-0 left-1/2 -translate-x-px w-px h-3 bg-neon-blue/20" />
-                  <div className="absolute bottom-0 left-1/2 -translate-x-px w-px h-3 bg-neon-blue/20" />
-                  <div className="absolute left-0 top-1/2 -translate-y-px w-3 h-px bg-neon-blue/20" />
-                  <div className="absolute right-0 top-1/2 -translate-y-px w-3 h-px bg-neon-blue/20" />
-                </div>
-
-                {/* Cyber dots on face area */}
-                {[
-                  { top: "22%", left: "35%", size: 3 },
-                  { top: "22%", left: "62%", size: 3 },
-                  { top: "32%", left: "48%", size: 2 },
-                  { top: "42%", left: "38%", size: 2 },
-                  { top: "42%", left: "58%", size: 2 },
-                  { top: "55%", left: "48%", size: 2.5 },
-                  { top: "28%", left: "28%", size: 1.5 },
-                  { top: "28%", left: "70%", size: 1.5 },
-                  { top: "65%", left: "40%", size: 1.5 },
-                  { top: "65%", left: "56%", size: 1.5 },
-                ].map((pos, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute rounded-full"
-                    style={{
-                      top: pos.top,
-                      left: pos.left,
-                      width: pos.size,
-                      height: pos.size,
-                      backgroundColor: i < 2 ? "rgba(0,255,136,0.5)" : "rgba(0,212,255,0.45)",
-                      boxShadow: `0 0 ${pos.size * 3}px ${i < 2 ? "rgba(0,255,136,0.3)" : "rgba(0,212,255,0.25)"}`,
-                    }}
-                    animate={{ opacity: [0.3, 0.9, 0.3], scale: [1, 1.3, 1] }}
-                    transition={{
-                      duration: 2 + i * 0.3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: i * 0.2,
-                    }}
-                  />
-                ))}
-
-                <motion.div
-                  className="absolute inset-0 pointer-events-none"
-                  animate={{ opacity: isScanning ? 0.9 : 0.55 }}
-                  transition={{ duration: 0.35 }}
-                  style={{
-                    background: "linear-gradient(180deg, rgba(0,0,0,0.02) 0%, transparent 45%, rgba(0,212,255,0.03) 100%)",
-                  }}
-                />
-
-                {/* Scanline texture overlay */}
-                <div className="absolute inset-0 pointer-events-none opacity-[0.04]" style={{
-                  background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.5) 2px, rgba(0,212,255,0.5) 3px)",
-                }} />
-              </div>
-
-              {/* Floating HUD labels */}
-              <motion.div
-                className="absolute -right-2 top-1/4 px-2 py-1 glass-panel rounded text-[9px] font-mono text-neon-blue/70 tracking-wider hidden sm:block"
-                animate={{ y: [0, -6, 0], opacity: [0.6, 1, 0.6] }}
-                transition={{ duration: 3, repeat: Infinity }}
-              >
-                ID: VERIFIED
-              </motion.div>
-              <motion.div
-                className="absolute -left-2 top-2/3 px-2 py-1 glass-panel rounded text-[9px] font-mono text-purple-accent/70 tracking-wider hidden sm:block"
-                animate={{ y: [0, -6, 0], opacity: [0.6, 1, 0.6] }}
-                transition={{ duration: 3.5, repeat: Infinity, delay: 1 }}
-              >
-                THREAT: NONE
-              </motion.div>
-              <motion.div
-                className="absolute left-1/2 -translate-x-1/2 -bottom-2 px-2 py-1 glass-panel rounded text-[9px] font-mono text-cyan-glow/60 tracking-wider hidden sm:block"
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                BIOMETRIC_SCAN: COMPLETE
-              </motion.div>
-
-              {/* Floating particles around */}
-              {[...Array(8)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute rounded-full"
-                  style={{
-                    width: Math.random() * 3 + 1,
-                    height: Math.random() * 3 + 1,
-                    top: `${15 + Math.random() * 70}%`,
-                    left: `${5 + Math.random() * 90}%`,
-                    backgroundColor: i % 2 === 0 ? "rgba(0,212,255,0.5)" : "rgba(168,85,247,0.4)",
-                    boxShadow: i % 2 === 0 ? "0 0 6px rgba(0,212,255,0.3)" : "0 0 6px rgba(168,85,247,0.2)",
-                  }}
-                  animate={{
-                    y: [0, -20, 0],
-                    x: [0, (Math.random() - 0.5) * 10, 0],
-                    opacity: [0.2, 0.8, 0.2],
-                  }}
-                  transition={{
-                    duration: 3 + i * 0.7,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: i * 0.4,
-                  }}
-                />
-              ))}
+            <div className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[210px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(214,180,119,0.2)_0%,rgba(214,180,119,0.08)_42%,transparent_72%)] blur-2xl lg:top-[43%] lg:w-[82%]" />
+            <div className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[198px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#D6B477]/35 shadow-[0_0_48px_rgba(214,180,119,0.12)] lg:top-[43%] lg:w-[77%]" />
+            <div className="relative mx-auto mt-0 h-[265px] w-[min(220px,70vw)] overflow-hidden rounded-t-[48%] rounded-b-[12%] bg-transparent lg:mt-4 lg:h-[540px] lg:w-[92%]">
+              <img
+                src="/images/Confident%20Young%20Man%20in%20Black%20Shirt%20(1).png"
+                alt="HASWIN SK"
+                className="absolute inset-0 h-full w-full object-cover object-[center_8%] brightness-[0.88] contrast-[1.08] saturate-[0.9]"
+              />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#11100F]/95 via-[#11100F]/45 to-transparent lg:h-12 lg:from-[#11100F] lg:via-[#11100F]/70" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-3 bg-[#11100F]/25 blur-md lg:hidden" />
             </div>
           </motion.div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      <svg
+        className="pointer-events-none absolute bottom-0 left-0 h-12 w-full opacity-35"
+        viewBox="0 0 1200 140"
+        preserveAspectRatio="none"
+        aria-hidden="true"
       >
-        <span className="text-[10px] font-mono text-white/30 tracking-widest">
-          SCROLL
-        </span>
-        <ChevronDown size={16} className="text-white/30" />
-      </motion.div>
+        <path
+          d="M0 34 C180 12 300 52 500 28 S820 14 1200 34"
+          fill="none"
+          stroke="#D6B477"
+          strokeOpacity="0.28"
+          strokeWidth="1"
+          className="hero-wave"
+        />
+        <path
+          d="M0 37 C180 15 300 55 500 31 S820 17 1200 37"
+          fill="none"
+          stroke="url(#goldWave)"
+          strokeOpacity="0.35"
+          strokeWidth="4"
+          strokeDasharray="1 16"
+          strokeLinecap="round"
+          className="hero-wave hero-wave-dots"
+        />
+        <path
+          d="M0 43 C200 22 350 58 560 36 S900 20 1200 43"
+          fill="none"
+          stroke="#E8CEA0"
+          strokeOpacity="0.16"
+          strokeWidth="1"
+          className="hero-wave hero-wave-delayed"
+        />
+        <defs>
+          <linearGradient id="goldWave" x1="0" x2="1">
+            <stop offset="0" stopColor="#D6B477" stopOpacity="0.1" />
+            <stop offset="0.5" stopColor="#E8CEA0" />
+            <stop offset="1" stopColor="#D6B477" stopOpacity="0.1" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <button
+        onClick={() => scrollTo("#about")}
+        aria-label="Scroll to About section"
+        className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[#A6A198] transition-colors hover:text-[#E8CEA0]"
+      >
+        <ArrowDown size={18} />
+      </button>
     </section>
   );
 }

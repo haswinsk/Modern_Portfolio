@@ -40,7 +40,7 @@ export const projects: Project[] = [
     ],
     category: "AI Assistant Prototype",
     status: "Active Prototype",
-    color: "#00ff88",
+    color: "#D6B477",
   },
   {
     id: "realtime-chat-music",
@@ -72,7 +72,7 @@ export const projects: Project[] = [
     status: "Live",
     demoUrl: "https://vibe-chat-lake.vercel.app/",
     githubUrl: "https://github.com/haswinsk/VibeChat.git",
-    color: "#00d4ff",
+    color: "#d6b477",
   },
   {
     id: "quickpass",
@@ -108,7 +108,7 @@ export const projects: Project[] = [
     status: "Live",
     demoUrl: "https://quick-pass-nu.vercel.app/",
     githubUrl: "https://github.com/haswinsk/QuickPass.git",
-    color: "#a855f7",
+    color: "#b99a62",
   },
   {
     id: "hyperlocal-services",
@@ -137,6 +137,6 @@ export const projects: Project[] = [
     status: "Concept Prototype",
     demoUrl: "https://neighborly-services.vercel.app/",
     githubUrl: "https://github.com/haswinsk/neighborly-services.git",
-    color: "#06b6d4",
+    color: "#D6B477",
   },
 ];

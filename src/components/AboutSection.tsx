@@ -16,147 +16,93 @@ export default function AboutSection() {
   return (
     <section
       id="about"
-      className="relative py-20 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="relative overflow-hidden px-4 pb-16 pt-8 sm:px-6 md:pb-20 md:pt-10 lg:min-h-[calc(100vh-4.5rem)] lg:px-8 lg:py-8"
     >
-      <div className="absolute inset-0 bg-radial-glow opacity-50" />
-
-      <div ref={ref} className="relative z-10 max-w-6xl mx-auto">
-        {/* Section header */}
+      <div ref={ref} className="relative z-10 mx-auto max-w-7xl">
         <motion.div
-          className="text-center mb-16"
+          className="mb-8 text-center md:mb-10 lg:mb-8"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <span className="text-xs font-mono text-neon-blue/60 tracking-[0.3em] mb-3 block">
+          <span className="mb-3 block font-mono text-[10px] tracking-[0.3em] text-[#D6B477]/75">
             [ IDENTITY_PANEL ]
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-            About <span className="text-gradient">Me</span>
+          <h2 className="mb-4 text-4xl font-semibold tracking-[-0.03em] text-[#F5F1E8] sm:text-5xl md:text-6xl lg:text-6xl">
+            About <span className="text-[#D6B477]">Me</span>
           </h2>
-          <div className="w-16 h-px bg-gradient-to-r from-transparent via-neon-blue to-transparent mx-auto" />
+          <div className="mx-auto h-px w-20 bg-gradient-to-r from-transparent via-[#D6B477] to-transparent" />
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          {/* Image side */}
+        <div className="grid items-center gap-10 lg:grid-cols-[38%_62%] lg:gap-12">
           <motion.div
-            className="relative"
+            className="relative mx-auto w-full max-w-[420px]"
             initial={{ opacity: 0, x: -40 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
-            <div className="relative aspect-[4/5] max-w-md mx-auto lg:mx-0 rounded-2xl overflow-hidden glass-panel p-1">
-              <div className="w-full h-full rounded-xl bg-deep-navy relative overflow-hidden">
-                {/* Actual casual photo */}
-                <img
-                  src="/images/about-casual.jpg"
-                  alt="HASWIN SK - Casual"
-                  className="absolute inset-0 w-full h-full object-cover object-top"
-                />
-
-                {/* Dark gradient overlay for blending */}
-                <div className="absolute inset-0 bg-gradient-to-t from-cyber-black/80 via-transparent to-cyber-black/30" />
-
-                {/* Holographic color overlays */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-tr from-neon-blue/8 via-transparent to-purple-accent/10 mix-blend-overlay"
-                  animate={{ opacity: [0.4, 0.7, 0.4] }}
-                  transition={{ duration: 4, repeat: Infinity }}
-                />
-
-                {/* Scan line */}
-                <motion.div
-                  className="absolute left-0 right-0 h-[2px]"
-                  style={{ background: "linear-gradient(90deg, transparent, rgba(0,240,255,0.3), transparent)" }}
-                  animate={{ top: ["0%", "100%"] }}
-                  transition={{ duration: 4.5, repeat: Infinity, ease: "linear" }}
-                />
-
-                {/* Second scan line reverse */}
-                <motion.div
-                  className="absolute left-0 right-0 h-px"
-                  style={{ background: "linear-gradient(90deg, transparent, rgba(168,85,247,0.2), transparent)" }}
-                  animate={{ top: ["100%", "0%"] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-                />
-
-                {/* Scanline texture */}
-                <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
-                  background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,212,255,0.4) 2px, rgba(0,212,255,0.4) 3px)",
-                }} />
-
-                {/* Corner brackets */}
-                <div className="absolute top-3 left-3 w-6 h-6 border-l-2 border-t-2 border-neon-blue/50" />
-                <div className="absolute top-3 right-3 w-6 h-6 border-r-2 border-t-2 border-neon-blue/50" />
-                <div className="absolute bottom-3 left-3 w-6 h-6 border-l-2 border-b-2 border-neon-blue/50" />
-                <div className="absolute bottom-3 right-3 w-6 h-6 border-r-2 border-b-2 border-neon-blue/50" />
-
-                {/* Floating UI panels */}
-                <motion.div
-                  className="absolute bottom-5 left-4 px-2.5 py-1.5 glass-panel rounded text-[10px] font-mono text-neon-blue/80 z-10"
-                  animate={{ y: [0, -5, 0], opacity: [0.7, 1, 0.7] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                >
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-400 mr-1.5 animate-pulse" />
-                  STATUS: ACTIVE
-                </motion.div>
-                <motion.div
-                  className="absolute top-5 right-4 px-2.5 py-1.5 glass-panel rounded text-[10px] font-mono text-purple-accent/80 z-10"
-                  animate={{ y: [0, -5, 0], opacity: [0.7, 1, 0.7] }}
-                  transition={{ duration: 3.5, repeat: Infinity }}
-                >
-                  LEVEL: ADVANCED
-                </motion.div>
-                <motion.div
-                  className="absolute bottom-5 right-4 px-2.5 py-1.5 glass-panel rounded text-[10px] font-mono text-cyan-glow/60 z-10"
-                  animate={{ opacity: [0.5, 1, 0.5] }}
-                  transition={{ duration: 2.5, repeat: Infinity }}
-                >
-                  AI_ENHANCED
-                </motion.div>
-              </div>
+            <div className="relative mx-auto h-[380px] w-full max-w-[420px] overflow-hidden rounded-2xl border border-[#D6B477]/35 bg-[#191817] shadow-[0_0_45px_rgba(214,180,119,0.08)] sm:h-[440px] lg:h-[min(520px,calc(100vh-12rem))]">
+              <img
+                src="/images/Confident%20Young%20Man%20in%20Black%20Shirt%20(1).png"
+                alt="HASWIN SK"
+                className="h-full w-full object-cover object-[center_top] brightness-[0.9] contrast-[1.05] saturate-[0.92]"
+              />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[#11100F] via-[#11100F]/45 to-transparent" />
             </div>
-
-            {/* Decorative elements */}
-            <div className="absolute -top-4 -right-4 w-20 h-20 border border-neon-blue/10 rounded-lg" />
-            <div className="absolute -bottom-4 -left-4 w-16 h-16 border border-purple-accent/10 rounded-lg" />
           </motion.div>
 
-          {/* Content side */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.3 }}
           >
-            <div className="space-y-4 mb-8">
-              <p className="text-base md:text-lg text-white/80 leading-relaxed">
+            <div className="mb-7 space-y-3 lg:mb-6">
+              <p className="text-base leading-7 text-[#F5F1E8]/85 md:text-lg lg:text-[17px] lg:leading-7">
                 I am a passionate{" "}
-                <span className="text-neon-blue font-medium">
+                <span className="font-medium text-[#D6B477]">
                   Full Stack Developer
                 </span>{" "}
                 who loves building products that push the boundaries of what is
                 possible on the web.
               </p>
-              <p className="text-sm md:text-base text-white/60 leading-relaxed">
-                My fascination with futuristic systems drives me to explore
-                AI-powered interfaces, immersive experiences, and next-generation
-                web technologies. I also have ideas in AI — especially around
-                intelligent assistants, automation, and creative tools. I believe
-                in continuous learning and staying at the forefront of innovation.
-              </p>
-              <p className="text-sm md:text-base text-white/60 leading-relaxed">
-                With a startup mindset, I approach every project as an opportunity
-                to create something meaningful. From real-time applications to
-                experimental UI concepts, I am always building, always learning.
+              <p className="text-sm leading-6 text-[#AAA49A] md:text-base lg:text-[15px] lg:leading-6">
+                My fascination with modern technologies drives me to explore{" "}
+                <span className="text-[#E8CEA0]">AI-powered applications</span>,
+                intelligent interfaces, automation and scalable web systems. I
+                enjoy solving real-world problems, experimenting with new
+                technologies and turning ideas into meaningful products.
               </p>
             </div>
 
-            {/* Stats grid */}
+            <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                ["Education", "Karpagam Academy of Higher Education", BookOpen],
+                ["Department", "Computer Science and Engineering", Code],
+                ["Current Year", "3rd Year", Rocket],
+                ["Career Focus", "Full Stack Development and AI", Lightbulb],
+              ].map(([label, value, Icon]) => (
+                <div
+                  key={label as string}
+                  className="flex min-h-[86px] items-start gap-3 rounded-lg border border-[#D6B477]/20 bg-[#191817]/70 p-3.5"
+                >
+                  <Icon className="mt-0.5 shrink-0 text-[#D6B477]" size={19} />
+                  <div>
+                    <div className="font-mono text-[9px] tracking-[0.16em] text-[#D6B477]/75">
+                      {label as string}
+                    </div>
+                    <div className="mt-1 text-xs leading-5 text-[#F5F1E8]/80">
+                      {value as string}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               {stats.map((stat, i) => (
                 <motion.div
                   key={stat.label}
-                  className="glass-panel rounded-xl p-4 text-center group hover:border-neon-blue/30 transition-colors"
+                  className="group flex min-h-[118px] flex-col items-center justify-center rounded-xl border border-[#D6B477]/20 bg-[#201F1C]/75 p-4 text-center transition-colors hover:border-[#D6B477]/50"
                   initial={{ opacity: 0, y: 20 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: 0.5 + i * 0.1 }}
@@ -164,12 +110,12 @@ export default function AboutSection() {
                 >
                   <stat.icon
                     size={20}
-                    className="mx-auto mb-2 text-neon-blue/60 group-hover:text-neon-blue transition-colors"
+                    className="mb-2 text-[#D6B477]/70 transition-colors group-hover:text-[#E8CEA0]"
                   />
-                  <div className="text-xl md:text-2xl font-bold text-white mb-1">
+                  <div className="mb-1 text-xl font-semibold text-[#F5F1E8] md:text-2xl">
                     {stat.value}
                   </div>
-                  <div className="text-[10px] md:text-xs font-mono text-white/40 tracking-wider">
+                  <div className="font-mono text-[10px] tracking-[0.12em] text-[#AAA49A] md:text-xs">
                     {stat.label}
                   </div>
                 </motion.div>

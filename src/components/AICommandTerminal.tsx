@@ -143,17 +143,17 @@ export default function AICommandTerminal() {
       {/* Hide the terminal trigger on small screens when chatbot is open */}
       <motion.button
         className={
-          `fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-3 rounded-full glass-panel-strong border border-neon-blue/25 shadow-[0_0_35px_rgba(0,212,255,0.12)] text-neon-blue ` +
+          `fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 z-50 flex h-11 w-11 -translate-x-1/2 items-center justify-center rounded-full glass-panel-strong border border-neon-blue/25 p-0 shadow-[0_0_35px_rgba(214,180,119,0.12)] text-neon-blue sm:bottom-6 sm:h-auto sm:w-auto sm:px-3 sm:py-2 lg:px-4 lg:py-3 ` +
           (chatOpen ? "hidden md:inline-flex" : "inline-flex")
         }
         onClick={() => setIsOpen((value) => !value)}
         whileHover={{ scale: 1.04, y: -2 }}
         whileTap={{ scale: 0.98 }}
       >
-        <span className="flex items-center gap-2 text-[11px] font-mono tracking-[0.28em]">
+        <span className="flex items-center gap-1.5 text-[10px] font-mono tracking-[0.2em] sm:text-[11px] sm:tracking-[0.24em] lg:gap-2 lg:tracking-[0.28em]">
           <Terminal size={14} />
-          AI TERMINAL
-          <ChevronUp size={13} className={isOpen ? "rotate-180 transition-transform" : "transition-transform"} />
+          <span className="hidden sm:inline">AI TERMINAL</span>
+          <ChevronUp size={13} className={`${isOpen ? "rotate-180 " : ""}hidden transition-transform sm:inline`} />
         </span>
       </motion.button>
 
@@ -166,7 +166,7 @@ export default function AICommandTerminal() {
             exit={{ opacity: 0, y: 24, scale: 0.97 }}
             transition={{ type: "spring", stiffness: 260, damping: 26 }}
           >
-            <div className="glass-panel-strong rounded-3xl overflow-hidden border border-neon-blue/20 shadow-[0_0_80px_rgba(0,212,255,0.1)]">
+            <div className="glass-panel-strong rounded-3xl overflow-hidden border border-neon-blue/20 shadow-[0_0_80px_rgba(214,180,119,0.1)]">
               <div className="flex items-center justify-between px-4 md:px-5 py-3 border-b border-white/5 bg-white/[0.02]">
                 <div>
                   <div className="text-[10px] font-mono tracking-[0.4em] text-neon-blue/60">CYBER TERMINAL</div>
@@ -194,7 +194,7 @@ export default function AICommandTerminal() {
                     initial={{ opacity: 0, x: -6, filter: "blur(2px)" }}
                     animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                   >
-                    <span className={entry.role === "user" ? "text-cyan-300" : "text-neon-blue/80"}>{entry.text}</span>
+                    <span className={entry.role === "user" ? "text-[#E8CEA0]" : "text-neon-blue/80"}>{entry.text}</span>
                   </motion.div>
                 ))}
                 {executing && (

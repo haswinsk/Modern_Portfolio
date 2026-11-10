@@ -1,8 +1,22 @@
 import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import { ExternalLink, Code, Layers } from "lucide-react";
+import {
+  Bot,
+  Code2,
+  ExternalLink,
+  GraduationCap,
+  MessageCircle,
+  ShoppingBag,
+} from "lucide-react";
 import { projects, type Project } from "../data/projects";
 import ProjectModal from "./ProjectModal";
+
+const projectIcons = {
+  jarvis: Bot,
+  "realtime-chat-music": MessageCircle,
+  quickpass: GraduationCap,
+  "hyperlocal-services": ShoppingBag,
+} as const;
 
 function ProjectCard({
   project,
@@ -13,152 +27,96 @@ function ProjectCard({
   index: number;
   onClick: () => void;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
-  const [mouseX, setMouseX] = useState(50);
-  const [mouseY, setMouseY] = useState(50);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setRotateX(-y * 10);
-    setRotateY(x * 10);
-    setMouseX(((e.clientX - rect.left) / rect.width) * 100);
-    setMouseY(((e.clientY - rect.top) / rect.height) * 100);
-  };
-
-  const handleMouseLeave = () => {
-    setRotateX(0);
-    setRotateY(0);
-  };
+  const Icon = projectIcons[project.id as keyof typeof projectIcons] ?? Code2;
 
   return (
-    <motion.div
-      ref={cardRef}
-      className="project-card glass-panel rounded-2xl overflow-hidden cursor-pointer group relative border border-white/5"
-      initial={{ opacity: 0, y: 40 }}
+    <motion.article
+      className="group flex h-full min-h-[530px] flex-col overflow-hidden rounded-2xl border border-[#D6B477]/20 bg-[#1B1A18] transition-colors hover:border-[#D6B477]/55"
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      onClick={onClick}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      whileHover={{ scale: 1.02, y: -8 }}
-      whileTap={{ scale: 0.99 }}
-      style={{
-        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-        transition: "transform 0.1s ease-out, box-shadow 0.25s ease",
-      }}
+      transition={{ duration: 0.5, delay: index * 0.08 }}
+      whileHover={{ y: -5 }}
     >
-      {/* Top color bar */}
-      <div
-        className="h-1 w-full"
-        style={{ backgroundColor: project.color }}
-      />
+      <button
+        type="button"
+        onClick={onClick}
+        className="relative flex h-48 w-full items-center justify-center overflow-hidden border-b border-[#D6B477]/15 bg-[#201F1C] text-left"
+        aria-label={`View ${project.title} details`}
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(214,180,119,0.12),transparent_58%)]" />
+        <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl border border-[#D6B477]/30 bg-[#11100F] text-[#D6B477] shadow-[0_0_30px_rgba(214,180,119,0.08)] transition-colors group-hover:border-[#D6B477]/65 group-hover:text-[#E8CEA0]">
+          <Icon size={38} strokeWidth={1.4} />
+        </div>
+        <span className="absolute bottom-4 left-5 font-mono text-[9px] tracking-[0.18em] text-[#AAA49A]">
+          PROJECT PREVIEW
+        </span>
+      </button>
 
-      <div className="p-5 md:p-6">
-        {/* Category & Status */}
-        <div className="flex items-center justify-between mb-3">
-          <span
-            className="text-[10px] font-mono px-2 py-0.5 rounded border"
-            style={{
-              color: project.color,
-              borderColor: `${project.color}40`,
-              backgroundColor: `${project.color}10`,
-            }}
-          >
+      <div className="flex flex-1 flex-col p-5 md:p-6">
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <span className="rounded border border-[#D6B477]/25 bg-[#D6B477]/10 px-2 py-1 font-mono text-[9px] tracking-[0.12em] text-[#E8CEA0]">
             {project.category}
           </span>
-          <span className="text-[10px] font-mono text-white/30">
+          <span className="text-right font-mono text-[9px] uppercase tracking-[0.12em] text-[#AAA49A]">
             {project.status}
           </span>
         </div>
 
-        {/* Title */}
-        <h3 className="text-lg md:text-xl font-bold text-white mb-2 group-hover:text-neon-blue transition-colors">
-          {project.title}
-        </h3>
+        <button type="button" onClick={onClick} className="text-left">
+          <h3 className="mb-2 font-serif text-2xl font-semibold text-[#F5F1E8] transition-colors group-hover:text-[#E8CEA0]">
+            {project.title}
+          </h3>
+          <p className="mb-4 text-xs font-medium leading-5 text-[#E8CEA0]/80">
+            {project.tagline}
+          </p>
+          <p className="text-sm leading-6 text-[#AAA49A]">{project.description}</p>
+        </button>
 
-        {/* Tagline */}
-        <p className="text-xs md:text-sm text-white/50 mb-4 font-mono">
-          {project.tagline}
-        </p>
-
-        {/* Description preview */}
-        <p className="text-xs md:text-sm text-white/40 mb-5 line-clamp-2 leading-relaxed">
-          {project.description}
-        </p>
-
-        {/* Tech stack */}
-        <div className="flex flex-wrap gap-1.5 mb-4">
-          {project.techStack.slice(0, 4).map((tech) => (
+        <div className="mt-5 flex flex-wrap gap-1.5">
+          {project.techStack.map((tech) => (
             <span
               key={tech}
-              className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/50 border border-white/5"
+              className="rounded border border-[#D6B477]/15 bg-[#11100F] px-2 py-1 font-mono text-[10px] text-[#AAA49A]"
             >
               {tech}
             </span>
           ))}
-          {project.techStack.length > 4 && (
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/30">
-              +{project.techStack.length - 4}
+        </div>
+
+        <div className="mt-auto flex flex-wrap gap-3 border-t border-[#D6B477]/15 pt-5">
+          {project.demoUrl && (
+            <a
+              href={project.demoUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(event) => event.stopPropagation()}
+              className="inline-flex items-center gap-2 rounded-md bg-[#D6B477] px-3 py-2 font-mono text-[10px] font-semibold tracking-[0.08em] text-[#11100F] transition-colors hover:bg-[#E8CEA0]"
+            >
+              <ExternalLink size={13} />
+              LIVE DEMO
+            </a>
+          )}
+          {project.githubUrl && (
+            <a
+              href={project.githubUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(event) => event.stopPropagation()}
+              className="inline-flex items-center gap-2 rounded-md border border-[#D6B477]/35 bg-[#11100F] px-3 py-2 font-mono text-[10px] tracking-[0.08em] text-[#F5F1E8] transition-colors hover:border-[#D6B477] hover:text-[#E8CEA0]"
+            >
+              <Code2 size={13} />
+              SOURCE
+            </a>
+          )}
+          {!project.demoUrl && !project.githubUrl && (
+            <span className="font-mono text-[10px] tracking-[0.12em] text-[#AAA49A]">
+              PRIVATE PROTOTYPE
             </span>
           )}
         </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-3 pt-3 border-t border-white/5">
-          {project.demoUrl && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(project.demoUrl, '_blank', 'noopener,noreferrer');
-              }}
-              className="flex items-center gap-1.5 text-[11px] font-mono text-white/40 hover:text-neon-blue transition-colors cursor-pointer pointer-events-auto bg-transparent border-none"
-            >
-              <ExternalLink size={12} />
-              DEMO
-            </button>
-          )}
-          {project.githubUrl && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(project.githubUrl, '_blank', 'noopener,noreferrer');
-              }}
-              className="flex items-center gap-1.5 text-[11px] font-mono text-white/40 hover:text-purple-accent transition-colors cursor-pointer pointer-events-auto bg-transparent border-none"
-            >
-              <Code size={12} />
-              SOURCE
-            </button>
-          )}
-          <div className="ml-auto">
-            <Layers size={14} className="text-white/20 group-hover:text-neon-blue/40 transition-colors" />
-          </div>
-        </div>
       </div>
-
-      {/* Hover glow */}
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-        style={{
-          background: `radial-gradient(circle at ${mouseX}% ${mouseY}%, ${project.color}10, transparent 55%), radial-gradient(circle at 50% 0%, ${project.color}06, transparent 70%)`,
-        }}
-      />
-
-      <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.02) 18%, transparent 34%, transparent 100%)`,
-            transform: `translateX(${mouseX - 50}%) translateY(${mouseY - 50}%)`,
-          }}
-        />
-      </div>
-    </motion.div>
+    </motion.article>
   );
 }
 
@@ -170,44 +128,40 @@ export default function ProjectsSection() {
   return (
     <section
       id="projects"
-      className="relative py-20 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="relative overflow-hidden px-4 py-14 sm:px-6 md:py-20 lg:px-8 lg:py-24"
     >
-      <div className="absolute inset-0 bg-radial-glow opacity-20" />
-      <div className="absolute inset-x-0 top-0 h-48 bg-[radial-gradient(circle_at_50%_0%,rgba(0,212,255,0.05),transparent_55%)]" />
-
-      <div ref={ref} className="relative z-10 max-w-7xl mx-auto">
-        {/* Section header */}
+      <div ref={ref} className="relative z-10 mx-auto max-w-7xl">
         <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
+          className="mb-10 text-center md:mb-14"
+          initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <span className="text-xs font-mono text-neon-blue/60 tracking-[0.3em] mb-3 block">
+          <span className="mb-3 block font-mono text-[10px] tracking-[0.3em] text-[#D6B477]/75">
             [ PROJECT_DATABASE ]
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-            Featured <span className="text-gradient">Projects</span>
+          <h2 className="mb-4 text-4xl font-semibold tracking-[-0.03em] text-[#F5F1E8] sm:text-5xl md:text-6xl">
+            Featured <span className="text-[#D6B477]">Projects</span>
           </h2>
-          <p className="text-sm md:text-base text-white/40 max-w-xl mx-auto">
-            Production-quality builds and ambitious research prototypes — honestly presented, focused on impact and engineering rigor.
+          <div className="mx-auto mb-5 h-px w-20 bg-gradient-to-r from-transparent via-[#D6B477] to-transparent" />
+          <p className="mx-auto max-w-2xl text-sm leading-7 text-[#AAA49A] md:text-base">
+            Building practical products, intelligent applications and solutions
+            to real-world problems.
           </p>
         </motion.div>
 
-        {/* Projects grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
-          {projects.map((project, i) => (
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {projects.map((project, index) => (
             <ProjectCard
               key={project.id}
               project={project}
-              index={i}
+              index={index}
               onClick={() => setSelectedProject(project)}
             />
           ))}
         </div>
       </div>
 
-      {/* Project Modal */}
       <ProjectModal
         project={selectedProject}
         onClose={() => setSelectedProject(null)}

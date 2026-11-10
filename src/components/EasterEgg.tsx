@@ -70,7 +70,7 @@ export default function EasterEgg() {
               <div>{`> Access level: ADMIN`}</div>
               <div>{`> Easter egg found: 1/1`}</div>
               <div>{`> Status: LEGENDARY`}</div>
-              <div className="text-green-400/60 mt-2">{`> Welcome to the inner circle.`}</div>
+              <div className="text-[#D6B477]/60 mt-2">{`> Welcome to the inner circle.`}</div>
             </div>
           </motion.div>
         </motion.div>
